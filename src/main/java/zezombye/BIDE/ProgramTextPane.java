@@ -1,6 +1,5 @@
 package zezombye.BIDE;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +28,6 @@ public class ProgramTextPane extends RSyntaxTextArea {
 	public ProgramTextPane(int type) {
 		super();
 		if (type == BIDE.TYPE_CAPT || type == BIDE.TYPE_PICT) {
-        	//this.setFont(BIDE.pictFont);
 			BIDE.error("This should not happen");
 			try {
 				throw new Exception();
@@ -52,10 +50,6 @@ public class ProgramTextPane extends RSyntaxTextArea {
 		this.setBackground(new Color(Integer.parseInt(BIDE.options.getProperty("bgColor"), 16)));
 		this.setForeground(new Color(Integer.parseInt(BIDE.options.getProperty("textColor"), 16)));
 		this.setCurrentLineHighlightColor(new Color(Integer.parseInt(BIDE.options.getProperty("hlColor"), 16)));
-		//this.getDocument().setParagraphAttributes(0, this.getDocument().getLength(), 1, true);
-		/*AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
-		atmf.putMapping("test/BasicCasio", "zezombye.BIDE.SyntaxColoration");
-		this.setSyntaxEditingStyle("text/BasicCasio");*/
 		this.setSyntaxEditingStyle(SYNTAX_STYLE_JAVA);
 		
 		//Set colors
@@ -98,23 +92,18 @@ public class ProgramTextPane extends RSyntaxTextArea {
 				@Override
 			    public void replace(final FilterBypass fb, final int offs, final int length, final String str, final AttributeSet a) throws BadLocationException {
 			    	if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
-			            if (str.equals("'")) {
-			                super.replace(fb, offs, length, "▀", a);
-			            } else if (str.equals(",")) {
-			                super.replace(fb, offs, length, "▄", a);
-			            } else if (str.equals(":")) {
-			                super.replace(fb, offs, length, "█", a);
-			            } else {
-			                super.replace(fb, offs, length, str, a);
-			            }
+						switch (str) {
+							case "'" -> super.replace(fb, offs, length, "▀", a);
+							case "," -> super.replace(fb, offs, length, "▄", a);
+							case ":" -> super.replace(fb, offs, length, "█", a);
+							default -> super.replace(fb, offs, length, str, a);
+						}
 			    	} else {
 			            super.replace(fb, offs, length, str, a);
 			    	}
 			    }
 			});
 			
-		} else if (type == BIDE.TYPE_PROG) {
-			//((AbstractDocument)this.getDocument()).setDocumentFilter(new CustomDocumentFilter(this, new SyntaxColoration().getColorationPatterns(BIDE.TYPE_PROG), BIDE.TYPE_PROG));
 		}
 		
 		if (BIDE.options.getProperty("autocomplete").equals("true")) {
@@ -133,63 +122,56 @@ public class ProgramTextPane extends RSyntaxTextArea {
 	public static void initAutoComplete() {
 	    DefaultCompletionProvider provider = new DefaultCompletionProvider() {
 	    	@Override protected boolean isValidChar(char ch) {
-	    		//return (ch >= 'A' && ch <= 'z') || "&^_".contains(""+ch);
 	    		return ch >= '!' && ch <= '~';
 	    	}
 	    };
 	    CompletionCellRenderer ccr = new CompletionCellRenderer();
 	    provider.setListCellRenderer(ccr);
-	    //provider.setAutoActivationRules(false, "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
 	    //If you change this string make sure to change the one in org.fife.ui.autocomplete.AbstractCompletionProvider.getCompletionsImpl() !
 	    provider.setAutoActivationRules(false, "&ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-	    ArrayList<Opcode> opcodes2 = new ArrayList<Opcode>(BIDE.opcodes);
-	    Collections.sort(opcodes2, new Comparator<Opcode>() {
-			@Override
-			public int compare(Opcode o1, Opcode o2) {
-				return o1.hex.compareTo(o2.hex);
-			}
-		});
-	    
-	    //System.out.println(opcodes2.toString());
-	    
-	    for (int i = 0; i < opcodes2.size(); i++) {
-	    	if (opcodes2.get(i).text.length() > 1 && opcodes2.get(i).text.matches("([ -~])+")) {
-	    		String txt = opcodes2.get(i).text.replaceAll("^ +", "");
-	    		String summary = generateSummary(opcodes2.get(i));
-	    		if (summary == null) continue;
-	    		//Add opcodes with unicode
-	    		if (opcodes2.get(i).unicode != null && BIDE.options.getProperty("allowUnicode").equals("true")) {
-	    			//Add unicode representation of character in description
-	    			if (opcodes2.get(i).unicode.length() == 1) {
-				    	provider.addCompletion(
+	    ArrayList<Opcode> opcodes2 = new ArrayList<>(BIDE.opcodes);
+	    opcodes2.sort(Comparator.comparing(o -> o.hex));
+
+		for (Opcode opcode : opcodes2) {
+			if (opcode.text.length() > 1 && opcode.text.matches("([ -~])+")) {
+				String txt = opcode.text.replaceAll("^ +", "");
+				String summary = generateSummary(opcode);
+				if (summary == null) continue;
+				//Add opcodes with unicode
+				if (opcode.unicode != null && BIDE.options.getProperty("allowUnicode").equals("true")) {
+					//Add unicode representation of character in description
+					if (opcode.unicode.length() == 1) {
+						provider.addCompletion(
 								new ShorthandCompletion(
-										provider, txt, opcodes2.get(i).unicode,
-										opcodes2.get(i).description, summary
+										provider, txt, opcode.unicode,
+										opcode.description, summary
 								)
 						);
-	    			} else {
-				    	provider.addCompletion(new ShorthandCompletion(provider, txt, opcodes2.get(i).unicode, opcodes2.get(i).description, summary));
-	    			}
-			    	
-	    		} else {
-	    			//System.out.println("relevance = "+opcodes2.get(i).relevance);
-			    	provider.addCompletion(new BasicCompletion(provider, txt, opcodes2.get(i).description, summary));
-	    		}
-	    	}
-	    }
+					} else {
+						provider.addCompletion(new ShorthandCompletion(provider, txt, opcode.unicode, opcode.description, summary));
+					}
+
+				} else {
+					provider.addCompletion(new BasicCompletion(provider, txt, opcode.description, summary));
+				}
+			}
+		}
 		cp = provider;
 	    for (int i = 0; i < BIDE.macros.size(); i++) {
 	    	if (BIDE.macros.get(i).text.length() > 1 && BIDE.macros.get(i).text.matches("[\\w\\(\\), ]+")) {
-	    		/*BasicCompletion bc = new BasicCompletion(provider, BIDE.macros.get(i).text, 2);
-	    		provider.addCompletion(bc);
-	    		System.out.println(bc.initialRelevance);*/
 	    		addMacroToCompletions(BIDE.macros.get(i));
 	    	}
 	    	
 	    }
 	    
-	    cp.addCompletion(new BasicCompletion(cp, "#nocheck", "2", "Tells BIDE to not throw an error if there is a non-existing opcode. Use this to write plain text into programs (such as formulas)."));
-	    cp.addCompletion(new BasicCompletion(cp, "#yescheck", "2", "Tells BIDE to check again for non-existing opcodes. See #nocheck."));
+	    cp.addCompletion(new BasicCompletion(
+				cp, "#nocheck", "2",
+				"Tells BIDE to not throw an error if there is a non-existing opcode. Use this to write plain text into programs (such as formulas)."
+		));
+	    cp.addCompletion(new BasicCompletion(
+				cp, "#yescheck", "2",
+				"Tells BIDE to check again for non-existing opcodes. See #nocheck."
+		));
 	}
 	
 	public static void addMacroToCompletions(Macro macro) {
@@ -224,7 +206,7 @@ public class ProgramTextPane extends RSyntaxTextArea {
 	}
 	
 
-	public static String relativeImgPath = BIDE.class.getClass().getResource("/doc/").toString();
+	public static String relativeImgPath = BIDE.class.getResource("/doc/").toString();
 	public static String convertToHtml(String str) {
 		
 		
@@ -246,11 +228,4 @@ public class ProgramTextPane extends RSyntaxTextArea {
 				.replaceAll("\\t", "&#09;")
 				.replaceAll("\n", "<br>");
 	}
-	
-	@Override
-	public void paintComponent(Graphics g) {
-		//((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-		super.paintComponent(g);
-	}
-	
 }

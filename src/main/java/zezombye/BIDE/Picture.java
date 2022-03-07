@@ -26,17 +26,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
-/*class PictPane extends JScrollPane {
-	
-	public PictPane(int type, String name, int size) {
-		this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        
-	}
-	
-}*/
-
-
 
 public class Picture extends JPanel {
 	
@@ -57,16 +46,14 @@ public class Picture extends JPanel {
 	
 	public Picture(int type, String name, int size, Byte[] data) {
 		this(type, name, size);
-		
-		//System.out.println("byte content 2 : "+Arrays.toString(data));
-		
+
 		pictPanel.pixels = Arrays.copyOfRange(data, 0, 0x400);
 		for (int i = 0; i < 0x400; i++) {
 			if (pictPanel.pixels[i] == null) {
 				pictPanel.pixels[i] = (byte)0;
 			}
 		}
-		//System.out.println("byte content 3 : "+Arrays.toString(pictPanel.pixels));
+
 		if (size > 0x400 && data.length > 0x400) {
 			pictPanel2.pixels = Arrays.copyOfRange(data, 0x400, size);
 			
@@ -79,7 +66,7 @@ public class Picture extends JPanel {
 	}
 	
 	public Picture(int type, String name, int size) {
-		this.setLayout(null); //Layouts are pure evil, absolute is at least consistent
+		this.setLayout(null); // Layouts are pure evil, absolute is at least consistent
 		
 		this.add(namePanel);
 		namePanel.add(new JLabel("Name:"));
@@ -116,8 +103,8 @@ public class Picture extends JPanel {
 		
 		this.addMouseWheelListener(new MouseWheelListener() {
 			@Override public void mouseWheelMoved(MouseWheelEvent e) {
-				//e.obey();
-				//e.conform();
+				// e.obey();
+				// e.conform();
 				e.consume();
 			    if (e.isControlDown()) {
 			        if (e.getWheelRotation() < 0) {            
@@ -190,9 +177,8 @@ public class Picture extends JPanel {
 				
 	    if (input != null) {
 	    	try {
-	    		
 	    		BufferedImage image = new BufferedImage(128, (this.size+15)/16, BufferedImage.TYPE_INT_RGB);
-	    		//System.out.println("pixels = "+Arrays.toString(pictPanel.pixels));
+
 	    		if (this.size <= 0x400) {
 	    			for (int i = 0; i < this.size*8; i++) {
 		    			if ((pictPanel.pixels[i/8] & (0b10000000 >> i%8)) == 0) {
@@ -313,8 +299,6 @@ class PictPanel extends JPanel {
 				}
 				
 				repaint();
-				
-				//System.out.println(Arrays.toString(pixels));
 			}
 			@Override public void mouseReleased(MouseEvent arg0) {}
 		});
@@ -362,7 +346,7 @@ class PictPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		//System.out.println(Arrays.toString(pixels));
+
 		for (int i = 0; i < 128; i++) {
 			for (int j = 0; j < 64; j++) {
 				if (i + 128*j >= pictSize*8) {
@@ -376,24 +360,12 @@ class PictPanel extends JPanel {
 			}
 		}
 		
-		//Draw borders
+		// Draw borders
 		g.setColor(Color.GRAY);
 		g.drawLine(0, 0, 128*zoom+1, 0);
 		g.drawLine(0, 0, 0, 64*zoom+1);
 		g.drawLine(128*zoom+1, 0, 128*zoom+1, 64*zoom+1);
 		g.drawLine(0, 64*zoom+1, 128*zoom+1, 64*zoom+1);
-		
-		/*if (zoom > 3) {
-			g.setColor(Color.GRAY);
-			for (int i = 1; i < 128; i++) {
-				g.drawLine(i*zoom, 0, i*zoom, 64*zoom);
-			}
-			for (int i = 1; i < 64; i++) {
-				g.drawLine(0, i*zoom, 128*zoom, i*zoom);
-			}
-		}*/
-		
-		
 	}
 	
 	

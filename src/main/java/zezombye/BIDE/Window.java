@@ -12,30 +12,20 @@ import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
 public class Window extends JFrame implements SearchListener {
-
-	//public FindDialog findDialog;
 	public ReplaceDialog replaceDialog;
-	//public StatusBar statusBar;
-	
+
 	public Window() {
 		super();
 		
-		//findDialog = new FindDialog(this, this);
 		replaceDialog = new ReplaceDialog(this, this);
-		//SearchContext context = findDialog.getSearchContext();
-		//replaceDialog.setSearchContext(context);
 		replaceDialog.setTitle("Find/Replace");
-		//statusBar = new StatusBar();
-		//replaceDialog.add(statusBar, BorderLayout.SOUTH);
 	}
 	
 	@Override
 	public String getSelectedText() {
 		try {
 			return ((ProgScrollPane)BIDE.ui.jtp.getSelectedComponent()).textPane.getSelectedText();
-		} catch (NullPointerException e) {
-			return null;
-		} catch (ClassCastException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			return null;
 		}
 	}
@@ -53,28 +43,25 @@ public class Window extends JFrame implements SearchListener {
 		
 		ProgramTextPane textPane = ((ProgScrollPane)BIDE.ui.jtp.getSelectedComponent()).textPane;
 		textPane.getCaret().getMark();
-		switch (type) {
-			default: // Prevent FindBugs warning later
-			case MARK_ALL:
-				result = SearchEngine.markAll(textPane, context);
-				break;
-			case FIND:
+		switch (type) { // Prevent FindBugs warning later
+			case MARK_ALL -> result = SearchEngine.markAll(textPane, context);
+			case FIND -> {
 				result = SearchEngine.find(textPane, context);
 				if (!result.wasFound()) {
 					UIManager.getLookAndFeel().provideErrorFeedback(textPane);
 				}
-				break;
-			case REPLACE:
+			}
+			case REPLACE -> {
 				result = SearchEngine.replace(textPane, context);
 				if (!result.wasFound()) {
 					UIManager.getLookAndFeel().provideErrorFeedback(textPane);
 				}
-				break;
-			case REPLACE_ALL:
+			}
+			case REPLACE_ALL -> {
 				result = SearchEngine.replaceAll(textPane, context);
 				JOptionPane.showMessageDialog(null, result.getCount() +
 						" occurrences replaced.");
-				break;
+			}
 		}
 
 		String text = "";
@@ -82,18 +69,10 @@ public class Window extends JFrame implements SearchListener {
 			text = "Text found";
 		}
 		else if (type==SearchEvent.Type.MARK_ALL) {
-			if (result.getMarkedCount()>0) {
-				//text = "Occurrences marked: " + result.getMarkedCount();
-			}
-			else {
-				text = "";
-			}
+			text = "";
 		}
 		else {
 			text = "Text not found";
 		}
-		// statusBar.setLabel(text);
-
 	}
-
 }

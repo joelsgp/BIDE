@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
@@ -19,7 +21,6 @@ import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -43,39 +44,17 @@ public class UI {
 
 		UIManager.getDefaults().put("TabbedPane.tabRunOverlay", 0);
 		UIManager.getDefaults().put("TabbedPane.focus", new Color(0, 0, 0, 0));
-		
-		// set back your originals
-		/*for (Map.Entry<Object, Object> entry : defaultsToKeep.entrySet()) {
-		    UIManager.getDefaults().put(entry.getKey(), entry.getValue());
-		}*/
-		
-		// set back your originals
-		//UIManager.getDefaults().put(test[0], test[1]);
-		/*for (i = 0; i < keys.length; i++) {
-			UIManager.getDefaults().put(keys[i], values[i]);
-		   // UIManager.getDefaults().put("TabbedPane.selectionFollowsFocus", true);
-		   // UIManager.getDefaults().put("TabbedPane.labelShift", 1);
-		   // UIManager.getDefaults().put("TabbedPane.selectedLabelShift", -1);
-		}*/
-		
 
-		
 		jtp = new JTabbedPane() {
 			@Override public void addTab(String name, Component comp) {
 				super.addTab(name, comp);
 				this.setTabComponentAt(jtp.getTabCount()-1, new ButtonTabComponent(jtp));
-				//this.getTabComponentAt(jtp.getTabCount()-1).setFont(BIDE.progFont); //doesn't work
 			}
 		};
 		
 		BasicTabbedPaneUI btpui = new BasicTabbedPaneUI();
 		jtp.setUI(btpui);
-		
-		
 
-		//jtp.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-		
-		
 		jfc = new JFileChooser();
 		jfc.setMultiSelectionEnabled(true);
 		
@@ -85,37 +64,28 @@ public class UI {
 		window.setSize(1200, 800);
 		window.setLocationRelativeTo(null);
 		try {
-			window.setIconImage(ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/BIDEicon.png")));
+			window.setIconImage(ImageIO.read(BIDE.class.getResourceAsStream("/images/BIDEicon.png")));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		//window.add(jsp);
 		window.add(jtp);
-		//jtp.setBorder(BorderFactory.createEmptyBorder());
-		
-		//Because writing sidebar.getWidth() causes bugs...
+
+		// Because writing sidebar.getWidth() causes bugs...
 		int sidebarWidth = 350;	
 		sidebar.setPreferredSize(new Dimension(sidebarWidth, window.getHeight()));
-		//sidebar.setSize(new Dimension(200, window.getHeight()));
 		window.add(sidebar, BorderLayout.EAST);
 		stdout.setWrapStyleWord(true);
-		try {
-			printStream = new PrintStream(new CustomOutputStream(stdout), false, "UTF-8");
-		} catch (UnsupportedEncodingException e2) {
-			e2.printStackTrace();
-		}
+		printStream = new PrintStream(new CustomOutputStream(stdout), false, StandardCharsets.UTF_8);
 		if (!BIDE.debug) {
 			System.setOut(printStream);
-			//System.setErr(printStream);
 		}
 		stdout.setBackground(Color.ORANGE);
 		stdout.setCaretColor(stdout.getBackground());
-		stdout.setFont(new Font("DejaVu Avec Casio", Font.TRUETYPE_FONT, 12));
+		stdout.setFont(new Font("DejaVu Avec Casio", Font.PLAIN, 12));
 		stdout.setLineWrap(true);
 				
 		JScrollPane jsp2 = new JScrollPane(stdout);
 		jsp2.setPreferredSize(new Dimension(sidebarWidth, 200));
-		//sidebar.setLayout(new BorderLayout());
 		sidebar.add(new JLabel("Console output"));
 		sidebar.add(jsp2);
 		
@@ -135,7 +105,7 @@ public class UI {
 					if (extension.equals(".bide") || extension.matches("\\.g[123][mr]")) {
 						return true;
 					}
-				} catch (Exception e) {}
+				} catch (Exception ignored) {}
 				return false;
 			}
 
@@ -144,11 +114,8 @@ public class UI {
 				return "Basic Casio files (.g1m, .g2m, .g1r, .g2r, .g3m, .bide)";
 			}
 		});
-		//window.setUndecorated(true);
-		
+
 		JMenuBar menuBar = new JMenuBar();
-		//menuBar.setMargin(new Insets(5, 10, 5, 10));
-		//menuBar.setFloatable(false);
 		ToolbarButton open = new ToolbarButton("openFile.png", "Open file (ctrl+O)");
 		open.addActionListener(new ActionListener() {
 			@Override
@@ -178,15 +145,6 @@ public class UI {
 			}
 		});
 		
-		/*newProg.addMouseListener(new java.awt.event.MouseAdapter() {
-		    public void mouseEntered(java.awt.event.MouseEvent evt) {
-		        System.out.println(Arrays.toString(Window.getWindows()));
-		    }
-
-		    public void mouseExited(java.awt.event.MouseEvent evt) {
-		    }
-		});*/
-		
 		ToolbarButton newPict = new ToolbarButton("newPict.png", "New Picture");
 		newPict.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent arg0) {
@@ -210,13 +168,6 @@ public class UI {
 
 		window.getRootPane().registerKeyboardAction(run.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
-		/*ToolbarButton dispOpcodes = new ToolbarButton("opcodes.png", "Show opcodes");
-		dispOpcodes.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_OPCODE);
-			}
-		});*/
-		
 		menuBar.add(open);
 		menuBar.add(save);
 		menuBar.add(newProg);
@@ -225,10 +176,8 @@ public class UI {
 		if (!BIDE.options.getProperty("runOn").equals("none")) {
 			menuBar.add(run);
 		}
-		//menuBar.add(dispOpcodes);
 		
 		menuBar.setPreferredSize(new Dimension(100, 25));
-		//menuBar.add(save);
 		window.add(menuBar, BorderLayout.NORTH);
 		
 		JMenuBar menuBar2 = new JMenuBar();
@@ -279,30 +228,12 @@ public class UI {
 		JMenu editMenu = new JMenu("Edit");
 		menuBar2.add(editMenu);
 		
-		/*JMenuItem showFindDialog = new JMenuItem(new AbstractAction() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (window.replaceDialog.isVisible()) {
-					window.replaceDialog.setVisible(false);
-				}
-				window.findDialog.setVisible(true);
-				this.putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, window.getToolkit().getMenuShortcutKeyMask()));
-			}
-			
-		});
-		showFindDialog.setText("Find");
-		editMenu.add(showFindDialog);*/
-		
 		JMenuItem showReplaceDialog = new JMenuItem(new AbstractAction() {
 			
 			
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*if (window.findDialog.isVisible()) {
-					window.findDialog.setVisible(false);
-				}*/
 				window.replaceDialog.setVisible(true);
 			}
 			
@@ -310,17 +241,6 @@ public class UI {
 		((AbstractAction)showReplaceDialog.getActionListeners()[0]).putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, window.getToolkit().getMenuShortcutKeyMask()));
 		showReplaceDialog.setText("Find/Replace");
 		editMenu.add(showReplaceDialog);
-		/*showFindDialog.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (window.replaceDialog.isVisible()) {
-					window.replaceDialog.setVisible(false);
-				}
-				window.findDialog.setVisible(true);
-				
-				
-			}
-		});*/
 		
 		JMenu toolsMenu = new JMenu("Tools");
 		menuBar2.add(toolsMenu);
@@ -344,7 +264,6 @@ public class UI {
 				importImage(false);
 			}
 		});
-		//toolsMenu.add(imgToMultiDrawstat);
 		JMenuItem showOptions = new JMenuItem("Show/Edit options");
 		showOptions.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent arg0) {
@@ -420,10 +339,10 @@ public class UI {
 		window.setJMenuBar(menuBar2);
 
 		window.setVisible(true);
-		//Because window.repaint() does not work...
-		//Java pls
-		//window.setSize(window.getWidth()+1, window.getHeight()+1);
-		//window.setSize(window.getWidth()-1, window.getHeight()-1);
+		// Because window.repaint() does not work...
+		// Java pls
+		// window.setSize(window.getWidth()+1, window.getHeight()+1);
+		// window.setSize(window.getWidth()-1, window.getHeight()-1);
 		
 	}
 	public ProgramTextPane getTextPane() {
@@ -461,85 +380,73 @@ public class UI {
 			} else if (type == BIDE.TYPE_OPCODE) {
 				name = "Opcodes List";
 				content = "#\n#DO NOT EDIT THIS TAB, changes won't be saved!\n#\n";
+				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/opcodes.txt"), StandardCharsets.UTF_8));
+				String line;
+				StringBuilder stringBuilder = new StringBuilder();
+
 				try {
-					BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getClass().getResourceAsStream("/opcodes.txt"), "UTF-8"));
-					String line = null;
-				    StringBuilder stringBuilder = new StringBuilder();
+					while((line = reader.readLine()) != null) {
+						stringBuilder.append(line);
+						stringBuilder.append("\n");
+					}
 
-				    try {
-				        while((line = reader.readLine()) != null) {
-				            stringBuilder.append(line);
-				            stringBuilder.append("\n");
-				        }
-
-				        content += stringBuilder.toString();
-				    } catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-				        try {
-							reader.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-				    }
-				} catch (UnsupportedEncodingException e) {
+					content += stringBuilder.toString();
+				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			
+
 			} else if (type == BIDE.TYPE_CHARLIST) {
 				name = "All characters";
+				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/characters.txt"), StandardCharsets.UTF_8));
+				String line = null;
+				StringBuilder stringBuilder = new StringBuilder();
+
 				try {
-					BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getClass().getResourceAsStream("/characters.txt"), "UTF-8"));
-					String line = null;
-				    StringBuilder stringBuilder = new StringBuilder();
+					while((line = reader.readLine()) != null) {
+						stringBuilder.append(line);
+						stringBuilder.append("\n");
+					}
 
-				    try {
-				        while((line = reader.readLine()) != null) {
-				            stringBuilder.append(line);
-				            stringBuilder.append("\n");
-				        }
-
-				        content += stringBuilder.toString();
-				    } catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-				        try {
-							reader.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-				    }
-				} catch (UnsupportedEncodingException e) {
+					content += stringBuilder.toString();
+				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			
+
 			} else if (type == BIDE.TYPE_COLORATION) {
 				name = "Syntax coloration test";
+				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/testColoration.txt"), StandardCharsets.UTF_8));
+				String line;
+				StringBuilder stringBuilder = new StringBuilder();
+
 				try {
-					BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getClass().getResourceAsStream("/testColoration.txt"), "UTF-8"));
-					String line = null;
-				    StringBuilder stringBuilder = new StringBuilder();
+					while((line = reader.readLine()) != null) {
+						stringBuilder.append(line);
+						stringBuilder.append("\n");
+					}
 
-				    try {
-				        while((line = reader.readLine()) != null) {
-				            stringBuilder.append(line);
-				            stringBuilder.append("\n");
-				        }
-
-				        content += stringBuilder.toString();
-				    } catch (IOException e) {
+					content += stringBuilder.toString();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						reader.close();
+					} catch (IOException e) {
 						e.printStackTrace();
-					} finally {
-				        try {
-							reader.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-				    }
-				} catch (UnsupportedEncodingException e1) {
-					e1.printStackTrace();
+					}
 				}
-			
+
 			} else {
 				BIDE.error("Unknown type "+type);
 			}
@@ -550,9 +457,6 @@ public class UI {
 			jtp.addTab(name, BIDE.g1mParts.get(BIDE.g1mParts.size()-1).comp);
 		}
 		
-		
-		//jtp.setTabComponentAt(jtp.getTabCount()-1, new ButtonTabComponent(jtp));
-		//((CustomDocumentFilter)((AbstractDocument)((Program)jtp.getComponentAt(jtp.getTabCount()-1)).textPane.getDocument()).getDocumentFilter()).testForLag();
 		selectLastTab();
 	}
 	
@@ -561,7 +465,6 @@ public class UI {
 	    try {
 	    	getTextPane().setCaretPosition(0);
 	    } catch (NullPointerException e) {
-	    	//if (BIDE.debug) e.printStackTrace();
 	    }
 	}
 	
@@ -609,13 +512,7 @@ public class UI {
 								if (arg0.type == arg1.type) {
 									return arg0.name.compareTo(arg1.name);
 								} else {
-									if (arg0.type < arg1.type) {
-										return -1;
-									} else if (arg0.type > arg1.type){
-										return 1;
-									} else {
-										return 0;
-									}
+									return Integer.compare(arg0.type, arg1.type);
 								}
 							}
 				    	});
@@ -663,69 +560,67 @@ public class UI {
 	
 	public void saveFile(boolean saveToG1M, boolean saveAs, boolean runFile) {
 		
-		new Thread(new Runnable() {
-	    	public void run() {
+		new Thread(() -> {
 
-				try {
-					
-					if (saveAs || BIDE.pathToSavedG1M.isEmpty()) {
-						if (BIDE.pathToSavedG1M.isEmpty()) {
-							BIDE.pathToSavedG1M = BIDE.pathToG1M;
-						}
-						jfc.setSelectedFile(new File(BIDE.pathToSavedG1M));
-			    		File input = null;
-						if (jfc.showSaveDialog(window) == JFileChooser.APPROVE_OPTION) {
-							input = jfc.getSelectedFile();
-						}
-						if (input == null) {
-							BIDE.pathToSavedG1M = "";
-							return;
-						}
+			try {
 
-						BIDE.pathToSavedG1M = input.getAbsolutePath();
-						
-						//Check for extension
-						try {
-							BIDE.pathToSavedG1M.substring(BIDE.pathToSavedG1M.lastIndexOf('.'));
-						} catch (StringIndexOutOfBoundsException e) {
-							BIDE.error("Please input an extension (.bide or .g1m)");
-							BIDE.pathToSavedG1M = "";
-							return;
-						}
-						
+				if (saveAs || BIDE.pathToSavedG1M.isEmpty()) {
+					if (BIDE.pathToSavedG1M.isEmpty()) {
+						BIDE.pathToSavedG1M = BIDE.pathToG1M;
 					}
-					
-							
-					if (runFile) {
-						BIDE.runOn = BIDE.options.getProperty("runOn");
-						BIDE.writeToG1M(BIDE.pathToSavedG1M);
-						
-		    		} else {
-			    		BIDE.runOn = "none";
-			    		
-						if (saveToG1M && !BIDE.pathToSavedG1M.endsWith(".bide") && !BIDE.pathToSavedG1M.endsWith(".txt")) {
-							BIDE.writeToG1M(BIDE.pathToSavedG1M);
-							
-						} else {
-							BIDE.writeToTxt(BIDE.pathToSavedG1M);
-						}
-		    		}
-					
-								
-					//Update names
-					for (int i = 0; i < jtp.getTabCount(); i++) {
-						jtp.setTitleAt(i, BIDE.g1mParts.get(i).name);
+					jfc.setSelectedFile(new File(BIDE.pathToSavedG1M));
+					File input = null;
+					if (jfc.showSaveDialog(window) == JFileChooser.APPROVE_OPTION) {
+						input = jfc.getSelectedFile();
 					}
-				} catch (NullPointerException e) {
-					if (BIDE.debug) e.printStackTrace();
-				} catch (NoSuchFileException e) {
-			    	BIDE.error("The file at \"" + BIDE.pathToSavedG1M + "\" does not exist.");
-			    } catch (AccessDeniedException e) {
-			    	BIDE.error("BIDE is denied access to the file at \"" + BIDE.pathToSavedG1M + "\"");
-			    } catch (IOException e) {
-					e.printStackTrace();
+					if (input == null) {
+						BIDE.pathToSavedG1M = "";
+						return;
+					}
+
+					BIDE.pathToSavedG1M = input.getAbsolutePath();
+
+					// Check for extension
+					try {
+						BIDE.pathToSavedG1M.substring(BIDE.pathToSavedG1M.lastIndexOf('.'));
+					} catch (StringIndexOutOfBoundsException e) {
+						BIDE.error("Please input an extension (.bide or .g1m)");
+						BIDE.pathToSavedG1M = "";
+						return;
+					}
+
 				}
-	    	}
+
+
+				if (runFile) {
+					BIDE.runOn = BIDE.options.getProperty("runOn");
+					BIDE.writeToG1M(BIDE.pathToSavedG1M);
+
+				} else {
+					BIDE.runOn = "none";
+
+					if (saveToG1M && !BIDE.pathToSavedG1M.endsWith(".bide") && !BIDE.pathToSavedG1M.endsWith(".txt")) {
+						BIDE.writeToG1M(BIDE.pathToSavedG1M);
+
+					} else {
+						BIDE.writeToTxt(BIDE.pathToSavedG1M);
+					}
+				}
+
+
+				// Update names
+				for (int i = 0; i < jtp.getTabCount(); i++) {
+					jtp.setTitleAt(i, BIDE.g1mParts.get(i).name);
+				}
+			} catch (NullPointerException e) {
+				if (BIDE.debug) e.printStackTrace();
+			} catch (NoSuchFileException e) {
+				BIDE.error("The file at \"" + BIDE.pathToSavedG1M + "\" does not exist.");
+			} catch (AccessDeniedException e) {
+				BIDE.error("BIDE is denied access to the file at \"" + BIDE.pathToSavedG1M + "\"");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}).start();
 	}
 	
@@ -744,7 +639,7 @@ public class UI {
 					if (extension.equals(".png") || extension.equals(".bmp")) {
 						return true;
 					}
-				} catch (Exception e) {}
+				} catch (Exception ignored) {}
 				return false;
 			}
 
@@ -777,14 +672,10 @@ public class UI {
 					for (int j = 0; j < img.getHeight(); j++) {
 						for (int i = 0; i < 128; i++) {
 							if (img.getRGB(i, j) == Color.BLACK.getRGB()) {
-								binary[i/8+16*j] = (byte)(binary[i/8+16*j] | (0b10000000 >> (i%8)));
-							} /*else {
-								binary += "1";
-								//System.out.println(img.getRGB(i, j));
-							}*/
+								binary[i/8+16*j] = (byte) (binary[i/8+16*j] | (0b10000000 >> (i%8)));
+							}
 						}
 					}
-					//System.out.println(binary);
 					int size = 128*img.getHeight()/8;
 					if (size == 0x400) {
 						int option = JOptionPane.showConfirmDialog(BIDE.ui.window, "Do you want to import this picture with a size of 0x800?\nIf you don't understand the consequences, click yes.", "BIDE", JOptionPane.YES_NO_OPTION);
@@ -798,37 +689,8 @@ public class UI {
 					BIDE.g1mParts.add(new G1MPart(imgName, Integer.toHexString(size), binary, BIDE.TYPE_PICT));
 					jtp.addTab(imgName, BIDE.g1mParts.get(BIDE.g1mParts.size()-1).comp);
 					selectLastTab();
-				} else {
-					
-					/*//Image to multi drawstat
-					//Divides the image into multiple horizontal lines, or multiple vertical lines.
-					//It can be improved but that's all I've got.
-					//Scrapped for now because I don't want unoptimized sprites into programs.
-					
-					ArrayList<Line> verticalLines = new ArrayList<Line>();
-					ArrayList<Line> horizontalLines = new ArrayList<Line>();
-					
-					for (int i = 0; i < img.getWidth(); i++) {
-						int y1 = i;
-						int y2 = i;
-						int x1 = 0, x2 = 0;
-						boolean foundLine = false;
-						for (int j = 0; j < img.getHeight(); j++) {
-							if (img.getRGB(i, j) == Color.BLACK.getRGB()) {
-								foundLine = true;
-								x1 = j;
-							} else if (foundLine) {
-								foundLine = false;
-								x2 = j;
-								verticalLines.add(new Line(x1, y1, x2, y2));
-							}
-							
-						}
-					}*/
-					
 				}
-				
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -849,7 +711,7 @@ class ToolbarButton extends JButton {
 	public ToolbarButton(String iconName, String toolTip) {
 		super();
 		try {
-			this.setIcon(new ImageIcon(ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/"+iconName))));
+			this.setIcon(new ImageIcon(ImageIO.read(BIDE.class.getResourceAsStream("/images/"+iconName))));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -930,9 +792,6 @@ class ButtonTabComponent extends JPanel {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g.create();
             //shift the image for pressed buttons
-            /*if (getModel().isPressed()) {
-                g2.translate(1, 1);
-            }*/
             g2.setStroke(new BasicStroke(1));
             
           
@@ -940,18 +799,18 @@ class ButtonTabComponent extends JPanel {
             if (getModel().isRollover()) {
                 g2.setColor(Color.BLACK);
             }
-            int lmargin = 0;
-            int rmargin = 2;
-            int umargin = 4;
-            int dmargin = 6;
+            int marginL = 0;
+            int marginR = 2;
+            int marginU = 4;
+            int marginN = 6;
             
-            g2.drawLine(lmargin, umargin, getWidth()-rmargin+1, getHeight()-dmargin+1);
-            g2.drawLine(lmargin+1, umargin, getWidth()-rmargin+1, getHeight()-dmargin);
-            g2.drawLine(lmargin, umargin+1, getWidth()-rmargin, getHeight()-dmargin+1);
+            g2.drawLine(marginL, marginU, getWidth()-marginR+1, getHeight()-marginN+1);
+            g2.drawLine(marginL+1, marginU, getWidth()-marginR+1, getHeight()-marginN);
+            g2.drawLine(marginL, marginU+1, getWidth()-marginR, getHeight()-marginN+1);
 
-            g2.drawLine(lmargin, getHeight()-dmargin+1, getWidth()-rmargin+1, umargin);
-            g2.drawLine(lmargin+1, getHeight()-dmargin+1, getWidth()-rmargin+1, umargin+1);
-            g2.drawLine(lmargin, getHeight()-dmargin, getWidth()-rmargin, umargin);
+            g2.drawLine(marginL, getHeight()-marginN+1, getWidth()-marginR+1, marginU);
+            g2.drawLine(marginL+1, getHeight()-marginN+1, getWidth()-marginR+1, marginU+1);
+            g2.drawLine(marginL, getHeight()-marginN, getWidth()-marginR, marginU);
             g2.dispose();
         }
     }

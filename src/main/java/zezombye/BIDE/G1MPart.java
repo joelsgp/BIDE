@@ -18,21 +18,17 @@ public class G1MPart {
 	public Object content;
 	public int type = 0;
 	
-	//Warning: do not use name, option or content to retrieve information because they may have changed!
-	//For example, if the user modifies the content to modify the name, that change will not be reflected in name (nor in content).
+	// Warning: do not use name, option or content to retrieve information because they may have changed!
+	// For example, if the user modifies the content to modify the name, that change will not be reflected in name (nor in content).
 	public G1MPart(String name, String option, Object content, int type) {
 		this.name = name;
 		this.option = option;
 		this.type = type;
-		//Check if content is missing headers
+		// Check if content is missing headers
 		if (type != BIDE.TYPE_PICT && type != BIDE.TYPE_CAPT && !((String)content).startsWith("#")) {
 			if (type == BIDE.TYPE_PROG) {
 				content = "#Program name: "+name+"\n#Password: "+option+"\n"+content;
-			} /*else if (type == BIDE.TYPE_PICT) {
-				content = "#Picture name: "+name+"\n#Size: 0x"+option+BIDE.pictTutorial+content;
-			} else if (type == BIDE.TYPE_CAPT) {
-				content = "#Capture name: "+name+"\n"+BIDE.pictTutorial+content;
-			}*/
+			}
 		}
 		this.content = content;
 		
@@ -64,7 +60,6 @@ public class G1MPart {
 				((JScrollPane)comp).getVerticalScrollBar().setUnitIncrement(30);
 				comp.setBorder(BorderFactory.createEmptyBorder());
 			}
-			
 		}
 	}
 }

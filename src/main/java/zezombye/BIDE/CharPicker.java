@@ -93,7 +93,7 @@ class CharPanel extends JPanel {
 		this.image = image;
 		this.nb = nb;
 		this.setPreferredSize(new Dimension(345, 169));
-		//this.setBorder(BorderFactory.createBevelBorder(1, Color.RED, Color.RED));
+		// this.setBorder(BorderFactory.createBevelBorder(1, Color.RED, Color.RED));
 		
 		this.addMouseMotionListener(new MouseMotionListener() {
 
@@ -128,10 +128,8 @@ class CharPanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				//System.out.println(arg0.getX() + " " + arg0.getY());
 				int gridX = arg0.getX()/18;
 				int gridY = arg0.getY()/24;
-				//System.out.println(CharPicker.catSymbols[nb][gridX+19*gridY]);
 				try {
 					String hex = CharPicker.catSymbols[nb][gridX+19*gridY];
 					String insert = "";

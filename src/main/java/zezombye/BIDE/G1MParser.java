@@ -28,27 +28,24 @@ public class G1MParser {
 		int fileIndex = 32;
 		while (fileIndex < fileContent.length()) {
 			
-			//Check if there are subparts
-			//If so, skip them (since they are not a program, capture, or picture)
-			//Note: this is very dirty
+			// Check if there are subparts
+			// If so, skip them (since they are not a program, capture, or picture)
+			// Note: this is very dirty
 			if (fileContent.charAt(fileIndex+0x13) > 1) {
 				int nbSubparts = fileContent.charAt(fileIndex+0x13);
-				//System.out.println("found something with "+nbSubparts+" subparts");
 				fileIndex += 0x14;
 				for (int h = 0; h < nbSubparts; h++) {
-					//System.out.println("parsing subpart "+fileContent.substring(8+fileIndex, 16+fileIndex));
 					int partSize = 0x18;
 					for (int i = 0; i < 4; i++) {
 						partSize += ((fileContent.charAt(fileIndex+0x11+i)&0xFF)<<(8*(3-i)));
 					}
-					//System.out.println("has part size of "+partSize);
 					fileIndex += partSize;
 				}
 				continue;
 			}
 			
-			//Seek the size of the part and add size of header which is 44 bytes long
-			//Lots of magic numbers in there
+			// Seek the size of the part and add size of header which is 44 bytes long
+			// Lots of magic numbers in there
 			int partSize = 44;
 			for (int i = 0; i < 4; i++) {
 				partSize += ((fileContent.charAt(fileIndex+37+i)&0xFF)<<(8*(3-i)));

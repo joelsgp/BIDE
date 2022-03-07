@@ -14,7 +14,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 public class CustomDocumentFilter extends DocumentFilter {
-    private StyledDocument styledDocument;
+    private final StyledDocument styledDocument;
 
     public JTextPane textPane;
     public ArrayList<ColorationPattern> regexes;

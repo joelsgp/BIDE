@@ -17,14 +17,11 @@ public class G1MWrapper {
 	public List<CasioString> parts = new ArrayList<>();
 	
 	public void addPart(CasioString part, CasioString partName, int type) {
-		
 		if (partName.length() > 8) {
 			partName = partName.substring(0, 8);
 		}
-		
-		
-		//System.out.println(sizeString);
-		//Subheader
+
+		// Subheader
 		byte[] padding = {0, 0, 0, 0, 0, 0, 0, 0};
 		CasioString sizeString = new CasioString(new byte[]{0,0,0,0});
 		for (int i = 0; i < 4; i++) {
@@ -33,8 +30,8 @@ public class G1MWrapper {
 		if (sizeString.length() != 4) {
 			BIDE.error("Size string length isn't 4!");
 		}
-		//System.out.println(sizeString);
-		//Subheader
+
+		// Subheader
 		CasioString subheader = getSubHeaderIDAndDir(type, partName.toString());
 		subheader.add(partName);
 		subheader.add(Arrays.copyOfRange(padding, 0, 8-partName.length()));
@@ -49,7 +46,7 @@ public class G1MWrapper {
 	}
 	
 	public void generateG1M(String destPath) throws IOException {
-		//Header
+		// Header
 		CasioString content = new CasioString();
 		for (CasioString part : parts) {
 			content.add(part);
@@ -65,16 +62,17 @@ public class G1MWrapper {
 		header.add(new byte[]{(byte)0xBD, (byte)0xB6, (byte)0xBB, (byte)0xBA, (byte)0xDF, (byte)0x8F, (byte)0x8D, (byte)0x90, (byte)0x98, (byte)(parts.size()>>8), (byte)parts.size()});
 		CasioString header2 = new CasioString();
 		for (int i = 0; i < header.length(); i++) {
-			//System.out.println(Integer.toHexString(0xFF-header.charAt(i)));
 			header2.add(0xFF-header.charAt(i));
 		}
 		content.add(0, header2);
 		IO.writeToFile(new File(destPath), content.getContent(), true);
 		if (BIDE.runOn.equals("emulator")) {
 			BIDE.autoImport.autoImport(destPath);
-		} else if (BIDE.runOn.equals("calculator")){
-			// TODO
 		}
+		// todo
+// 		else if (BIDE.runOn.equals("calculator")){
+//
+// 		}
 	}
 	
 	public int getPartID(int partType) {
@@ -91,8 +89,8 @@ public class G1MWrapper {
 		}
 	}
 	
-	//Not really necessary to use CasioStrings here
-	//Only special bytes are 0 and 1
+	// Not really necessary to use CasioStrings here
+	// Only special bytes are 0 and 1
 	public CasioString getSubHeaderIDAndDir(int partType, String partName) {
 		StringBuilder partTypeStr = new StringBuilder();
 		StringBuilder partDir = new StringBuilder();
@@ -115,7 +113,7 @@ public class G1MWrapper {
 			}
 		}
 		
-		//padding
+		// padding
 		int idlen = partTypeStr.length();
 		for (int i = 0; i < 16-idlen; i++) {
 			partTypeStr.append((char) 0);

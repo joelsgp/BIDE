@@ -3,13 +3,10 @@ package zezombye.BIDE;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -216,33 +213,33 @@ class DrawstatPanel extends JPanel {
 		if (xClick >= 0 && yClick >= 0) {
 			pixels[xClick][yClick] = 1;
 		}
-		for (int i = 0; i < lines.size(); i++) {
-			drawLine(lines.get(i).x0, lines.get(i).y0, lines.get(i).x1, lines.get(i).y1);
+		for (Line line : lines) {
+			drawLine(line.x0, line.y0, line.x1, line.y1);
 		}
 		try {
 			drawLine(xClick, yClick, xMouse, yMouse);
-		} catch (ArrayIndexOutOfBoundsException e) {}
+		} catch (ArrayIndexOutOfBoundsException ignored) {}
 	}
 	
 	public void updateResult() {
-		String list1 = "";
-		String list2 = "";
+		StringBuilder list1 = new StringBuilder();
+		StringBuilder list2 = new StringBuilder();
 		
 		//get minimum x and y
 		int minX = 127, minY = 63;
-		for (int i = 0; i < lines.size(); i++) {
-			if (lines.get(i).x0 < minX) minX = lines.get(i).x0;
-			if (lines.get(i).x1 < minX) minX = lines.get(i).x1;
-			if (lines.get(i).y0 < minY) minY = lines.get(i).y0;
-			if (lines.get(i).y1 < minY) minY = lines.get(i).y1;
+		for (Line line : lines) {
+			if (line.x0 < minX) minX = line.x0;
+			if (line.x1 < minX) minX = line.x1;
+			if (line.y0 < minY) minY = line.y0;
+			if (line.y1 < minY) minY = line.y1;
 		}
 		
 		for (int i = 0; i < lines.size(); i++) {
-			list1 += getOptimizedCoord(lines.get(i).x0-minX, lines.get(i).x1-minX);
-			list2 += getOptimizedCoord(lines.get(i).y0-minY, lines.get(i).y1-minY);
+			list1.append(getOptimizedCoord(lines.get(i).x0 - minX, lines.get(i).x1 - minX));
+			list2.append(getOptimizedCoord(lines.get(i).y0 - minY, lines.get(i).y1 - minY));
 			if (i < lines.size()-1) {
-				list1 += ", ";
-				list2 += ", ";
+				list1.append(", ");
+				list2.append(", ");
 			}
 		}
 		result.setText(mdg.modifier + "Graph(X,Y)=(xSprite+{"+list1+"}, ySprite+{"+list2+"})");
@@ -294,24 +291,19 @@ class DrawstatPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		drawScreen();
 		updateResult();
-		//updateInfo();
 		super.paintComponent(g);
 		if (mdg.showGrid) {
 			for (int i = 0; i <= 128; i+=4) {
-				if (i%16 == 0) {
+				if (i % 16 == 0) {
 					g.setColor(Color.GRAY);
-				} else if (i%4 == 0) {
-					g.setColor(Color.LIGHT_GRAY);
 				} else {
 					g.setColor(Color.LIGHT_GRAY);
 				}
 				g.drawLine(i*zoom, 0, i*zoom, 64*zoom);
 			}
 			for (int i = 0; i <= 64; i+=4) {
-				if (i%16 == 0) {
+				if (i % 16 == 0) {
 					g.setColor(Color.GRAY);
-				} else if (i%4 == 0) {
-					g.setColor(Color.LIGHT_GRAY);
 				} else {
 					g.setColor(Color.LIGHT_GRAY);
 				}
@@ -396,9 +388,7 @@ class DrawstatPanel extends JPanel {
 	                }
 	            }
 	        }
-		} catch (ArrayIndexOutOfBoundsException e) {
-			
-		}
+		} catch (ArrayIndexOutOfBoundsException ignored) {}
         
 	}
 }

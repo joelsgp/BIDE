@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +20,7 @@ public class Options {
 	public void loadProperties() {
 		
 		try {
-			options.load(new FileInputStream(new File(BIDE.pathToOptions)));
+			options.load(new FileInputStream(BIDE.pathToOptions));
 		} catch (FileNotFoundException e) {
 			System.out.println("No options.txt file found, creating it at "+BIDE.pathToOptions);
 			initProperties();
@@ -38,15 +39,6 @@ public class Options {
 		}
 	}
 	
-	//Not needed, removes comments
-	/*public void saveProperties() {
-		try {
-			options.store(new FileWriter(new File(BIDE.pathToOptions)), "");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
-	
 	public String getProperty(String prop) {
 		if (options.getProperty(prop) == null) {
 			BIDE.error("Could not find property "+prop);
@@ -60,7 +52,11 @@ public class Options {
 	
 	public void initProperties() {
 		try {
-			IO.writeStrToFile(new File(BIDE.pathToOptions), new BufferedReader(new InputStreamReader(BIDE.class.getClass().getResourceAsStream("/options.txt"))).lines().collect(Collectors.joining("\n")), true);
+			IO.writeStrToFile(
+					new File(BIDE.pathToOptions),
+					new BufferedReader(
+							new InputStreamReader(
+									BIDE.class.getResourceAsStream("/options.txt"))).lines().collect(Collectors.joining("\n")), true);
 			loadProperties();
 		} catch (IOException e) {
 			e.printStackTrace();

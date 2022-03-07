@@ -33,7 +33,7 @@ import com.google.gson.reflect.TypeToken;
 
 /*
  * TODO:
- * add find and replace
+ * 	add find and replace
  */
 
 public class BIDE {
@@ -46,7 +46,6 @@ public class BIDE {
 	public static String pathToG1M = System.getProperty("user.home")+"/desktop/";
 	public static String pathToSavedG1M = "";
 	public static final String pathToOptions = System.getProperty("user.home")+"/BIDE/options.txt";
-	//public static final String pathToTmp = System.getProperty("user.home")+"/BIDE/tmp.g1m";
 	public static UI ui = new UI();
 	
 	public static String runOn = "none";
@@ -94,7 +93,7 @@ public class BIDE {
 						|| args[0].equals("--help")
 						|| args[0].equals("-help"))
 		) {
-			//CLI
+			// CLI
 			isCLI = true;
 			switch (args[0]) {
 				case "--help", "-help" -> System.out.println("""
@@ -180,7 +179,7 @@ public class BIDE {
 					System.out.println("Finished initialization");
 					if (!debug) {checkForNewVersion();}
 					
-					//Open eventual files provided as arguments
+					// Open eventual files provided as arguments
 					
 					if (args.length > 0) {
 						File[] files = new File[args.length];
@@ -213,11 +212,11 @@ public class BIDE {
 				return;
 			}
 			
-			//By chance, "Program", "Picture" and "Capture" have the same number of letters.
+			// By chance, "Program", "Picture" and "Capture" have the same number of letters.
 			String name = progsTxt[i].substring(15, progsTxt[i].indexOf('\n'));
 			
 			System.out.println("Parsing part \""+name+"\"");
-			//Get 2nd line, which is option
+			// Get 2nd line, which is option
 			String option = "";
 			try {
 				option = progsTxt[i].substring(
@@ -274,7 +273,7 @@ public class BIDE {
 			if (g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_PROG) {
 				
 				String progName = casioToAscii(g1mparser.getPartName(g1mparser.parts.get(h)), false);
-				//Check for "base" program
+				// Check for "base" program
 				boolean isBaseProgram = false;
 				if (g1mparser.parts.get(h).charAt(52) == 0x01) {
 					if (BIDE.options.getProperty("allowUnicode").equals("true")) {
@@ -307,12 +306,11 @@ public class BIDE {
 					content = g1mparser.getPartContent(g1mparser.parts.get(h));
 				} else {
 					System.out.println("Found capture \""+name+"\"");
-					//Captures have a width and height attribute, skip it
+					// Captures have a width and height attribute, skip it
 					content = g1mparser.getPartContent(g1mparser.parts.get(h)).substring(4, 0x404);
 				}
 				
 				Byte[] result = content.getContent().toArray(new Byte[0]);
-				//System.out.println("byte content : "+Arrays.toString(result));
 				if (g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_PICT) {
 					g1mParts.add(new G1MPart(name, Integer.toHexString(content.length()), result, TYPE_PICT));
 				} else {
@@ -333,11 +331,10 @@ public class BIDE {
 		System.out.println("Saving to \""+destPath+"\"...");
 		
 		G1MWrapper g1mwrapper = new G1MWrapper();
-		//Parse text file
+		// Parse text file
 		G1MPart currentPart = null;
 		clearMacros();
-		
-		//ArrayList<Macro> macros = new ArrayList<Macro>();
+
 		for (int h = 0; h < g1mParts.size(); h++) {
 			int type = g1mParts.get(h).type;
 			if (type != TYPE_PICT && type != TYPE_CAPT && type != TYPE_PROG) {
@@ -345,7 +342,6 @@ public class BIDE {
 			}
 			
 			currentPart = g1mParts.get(h);
-			//currentPart.content = "";
 			if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
 				
 				Picture pict = ((Picture)((JScrollPane)(g1mParts.get(h).comp)).getViewport().getView());
@@ -381,9 +377,6 @@ public class BIDE {
 					}
 				}
 				for (int i = 0; i < lines.length; i++) {
-					/*if (lines[i].endsWith("Then") || lines[i].endsWith("Else")) {
-						lines[i] += " ";
-					}*/
 					if (lines[i].startsWith("#define ")) {
 						try {
 							
@@ -391,7 +384,7 @@ public class BIDE {
 							String text, replacement;
 							String[] args = null;
 							if (macro.indexOf(")") > 0 && macro.substring(0, macro.indexOf(")")+1).matches("\\w+\\([\\w, ]+\\)")) {
-								//It's a function macro
+								// It's a function macro
 								text = macro.substring(0, macro.indexOf(")")+1);
 								System.out.println("Found function macro "+text);
 								
@@ -406,7 +399,7 @@ public class BIDE {
 								}
 								System.out.println("Found macro "+text);
 							}
-							//Check for empty defines
+							// Check for empty defines
 							if (macro.length() == text.length()) {
 								replacement = "";
 							} else {
@@ -453,7 +446,7 @@ public class BIDE {
 		if (BIDE.debug) {
 			System.out.println(macros.toString());
 		}
-		//Add each part (program) of the ascii file
+		// Add each part (program) of the ascii file
 		byte[] padding = {0,0,0,0,0,0,0,0};
 		for (int i = 0; i < g1mParts.size(); i++) {
 			
@@ -571,19 +564,6 @@ public class BIDE {
 		System.out.println("Done!");
 	}
 	
-	/*public static String pictToAscii(CasioString content, int type) {
-		//Convert from binary to string
-		StringBuilder binary = new StringBuilder();
-		for (int i = 0; i < content.length(); i++) {
-			int mask = 0b10000000;
-			for (int j = 0; j < 8; j++) {
-				binary.append(((content.charAt(i)&mask) != 0 ? "1" : "0"));
-				mask >>= 1;
-			}
-		}
-		return pictToAscii(binary.toString(), type);
-	}*/
-	
 	public static String pictToAscii(Byte[] content) {
 		StringBuilder asciiResult = new StringBuilder();
 		for (int i = 0; i < 130; i++) {
@@ -626,8 +606,8 @@ public class BIDE {
 	}
 	
 	public static CasioString asciiToPict(String content, String progName, int startLine, String pictSize) {
-		//Strip border
-		//Split on lines
+		// Strip border
+		// Split on lines
 		String[] lines = content.split("\\n|\\r|\\r\\n");
 		String binary = "";
 		ArrayList<Byte> bytes = new ArrayList<Byte>();
@@ -648,7 +628,7 @@ public class BIDE {
 			}
 
 			
-			//Iterate twice on the line to convert to ascii binary
+			// Iterate twice on the line to convert to ascii binary
 			for (int j = 0; j < 128; j++) {
 				if (lines[i].charAt(j) == '▀' || lines[i].charAt(j) == '█') {
 					binary += '1';
@@ -668,7 +648,7 @@ public class BIDE {
 			}
 		}
 		
-		//Convert ascii binary to bytes
+		// Convert ascii binary to bytes
 		for (int i = 0; i < Integer.parseInt(pictSize, 16); i++) {
 			bytes.add((byte) Integer.parseInt(binary.substring(8 * i, 8 * i + 8), 2));
 		}
@@ -680,16 +660,14 @@ public class BIDE {
 	public static CasioString asciiToCasio(String content, boolean allowUnknownOpcodes, String progName, int startLine, List<Macro> macros) {
 		CasioString result = new CasioString();
 		
-		//Optimise for less wasted space
+		// Optimise for less wasted space
 		
-		//TODO: fix bug with Else messing up line count in errors
-		//content = content.replaceAll("Else ?\\n", "Else ");
+		// TODO: fix bug with Else messing up line count in errors
+		// content = content.replaceAll("Else ?\\n", "Else ");
 		content = content.replaceAll(":Then ?\\n", "\nThen ");
 		content = content.replaceAll("Then ?\\n", "Then ");
 		
 		String[] lines = content.split("\\n|\\r|\\r\\n");
-		
-		//System.out.println(Arrays.toString(lines));
 		
 		for (int h = 0; h < lines.length; h++) {
 			if (lines[h].startsWith("#nocheck")) {
@@ -711,12 +689,8 @@ public class BIDE {
 				if (lines[h].charAt(i) == '"' && !escapeNextChar) {
 					currentPosIsString = !currentPosIsString;
 				}
-				
-				if (lines[h].charAt(i) == '\\' && !escapeNextChar) {
-					escapeNextChar = true;
-				} else {
-					escapeNextChar = false;
-				}
+
+				escapeNextChar = lines[h].charAt(i) == '\\' && !escapeNextChar;
 				
 				if (lines[h].charAt(i) == '\'' && !currentPosIsString) {
 					currentPosIsComment = true;
@@ -731,7 +705,7 @@ public class BIDE {
 					continue;
 				}
 				
-				//hex escape
+				// hex escape
 				if (lines[h].startsWith("&#", i)) {
 					String hexEsc = lines[h].substring(i+2, lines[h].indexOf(";", i));
 					if (hexEsc.length() != 2 && hexEsc.length() != 4) {
@@ -746,7 +720,7 @@ public class BIDE {
 					continue;
 				}
 				
-				//Test for macros
+				// Test for macros
 				if (!allowUnknownOpcodes && !currentPosIsString && !currentPosIsComment) {
 					boolean foundMacro = false;
 					for (int j = 0; j < macros.size(); j++) {
@@ -755,7 +729,7 @@ public class BIDE {
 							if (lines[h].startsWith(macros.get(j).text.substring(0, macros.get(j).text.indexOf("(")+1), i)) {
 								
 								System.out.println("Found match for function macro "+macros.get(j).text);
-								//Get location of closing parenthesis
+								// Get location of closing parenthesis
 								int depth = 0;
 								int beginParenthesisIndex = lines[h].indexOf("(", i);
 								int k = 0;
@@ -768,11 +742,7 @@ public class BIDE {
 										if (lines[h].charAt(k) == '"' && !escapeNextChar2) {
 											currentPosIsString2 = !currentPosIsString2;
 										}
-										if (lines[h].charAt(k) == '\\' && !escapeNextChar2) {
-											escapeNextChar2 = true;
-										} else {
-											escapeNextChar2 = false;
-										}
+										escapeNextChar2 = lines[h].charAt(k) == '\\' && !escapeNextChar2;
 										if (lines[h].charAt(k) == ',' && !currentPosIsString2) {
 											commaPos.add(k);
 										}
@@ -821,16 +791,10 @@ public class BIDE {
 							if (lines[h].startsWith(macros.get(j).text, i)) {
 								lines[h] = lines[h].substring(0, i) + macros.get(j).replacement + lines[h].substring(i+macros.get(j).text.length());
 								foundMacro = true;
-								//System.out.println(lines[h]);
 								break;
 							}
 						}
-							
 					}
-					/*if (foundMacro) {
-						i--;
-						continue;
-					}*/
 				}
 				
 				
@@ -860,7 +824,7 @@ public class BIDE {
 						}
 						if (lines[h].startsWith(opcodes.get(j).text, i)) {
 							i += opcodes.get(j).text.length()-1;
-						} else { //lines[h].startsWith(opcodes.get(j).unicode, i) == true
+						} else {
 							i += opcodes.get(j).unicode.length()-1;
 						}
 						break;
@@ -887,7 +851,7 @@ public class BIDE {
 				
 			}
 			
-			//add line feed
+			// add line feed
 			if (h < lines.length-1 && !lines[h].trim().endsWith("◢") && !lines[h].trim().endsWith("&disp;")) {
 				result.add(0x0D);
 			}
@@ -901,41 +865,37 @@ public class BIDE {
 	public static String casioToAscii(CasioString content, boolean addSpaces) {
 		String allowedCharacters = " !#$%;@_`abcdefghijklmnopqrstuvwxyz|";
 		
-		//Opcodes causing indentation
-		List<String> indent = Arrays.asList(new String[]{
-			"f700", //If
-			"f702", //Else
-			"f704", //For
-			"f708", //While
-			"f70a", //Do
-		});
-		//Opcodes causing unindentation
-		List<String> unindent = Arrays.asList(new String[]{
-			"f702", //Else
-			"f703", //IfEnd
-			"f707", //Next
-			"f709", //WhileEnd
-			"f70b", //LpWhile
-		});
+		// Opcodes causing indentation
+		List<String> indent = Arrays.asList("f700", // If
+				"f702", // Else
+				"f704", // For
+				"f708", // While
+				"f70a" // Do
+		);
+		// Opcodes causing unindentation
+		List<String> unindent = Arrays.asList("f702", // Else
+				"f703", // IfEnd
+				"f707", // Next
+				"f709", // WhileEnd
+				"f70b" // LpWhile
+		);
 		
-		//Opcodes with added spaces
-		List<String> opcodesSpaces = Arrays.asList(new String[] {
-			"E", options.getProperty("spacesFor->"), " -> ",
-			"10", options.getProperty("spacesFor<="), " <= ",
-			"11", options.getProperty("spacesFor!="), " != ",
-			"12", options.getProperty("spacesFor>="), " >= ",
-			"13", options.getProperty("spacesFor=>"), " => ",
-			"2C", options.getProperty("spacesFor,"), ", ",
-			"3A", options.getProperty("spacesFor:"), " : ",
-			"3C", options.getProperty("spacesFor<"), " < ",
-			"3D", options.getProperty("spacesFor="), " = ",
-			"3E", options.getProperty("spacesFor>"), " > ",
-			"89", options.getProperty("spacesFor+"), " + ",
-			"99", options.getProperty("spacesFor-"), " - ",
-			"A8", options.getProperty("spacesFor^"), " ^ ",
-			"A9", options.getProperty("spacesFor*"), " * ",
-			"B9", options.getProperty("spacesFor/"), " / ",
-		});
+		// Opcodes with added spaces
+		List<String> opcodesSpaces = Arrays.asList("E", options.getProperty("spacesFor->"), " -> ",
+				"10", options.getProperty("spacesFor<="), " <= ",
+				"11", options.getProperty("spacesFor!="), " != ",
+				"12", options.getProperty("spacesFor>="), " >= ",
+				"13", options.getProperty("spacesFor=>"), " => ",
+				"2C", options.getProperty("spacesFor,"), ", ",
+				"3A", options.getProperty("spacesFor:"), " : ",
+				"3C", options.getProperty("spacesFor<"), " < ",
+				"3D", options.getProperty("spacesFor="), " = ",
+				"3E", options.getProperty("spacesFor>"), " > ",
+				"89", options.getProperty("spacesFor+"), " + ",
+				"99", options.getProperty("spacesFor-"), " - ",
+				"A8", options.getProperty("spacesFor^"), " ^ ",
+				"A9", options.getProperty("spacesFor*"), " * ",
+				"B9", options.getProperty("spacesFor/"), " / ");
 		
 		List<String> lines = new ArrayList<String>();
 		String tabs = "";
@@ -952,7 +912,7 @@ public class BIDE {
 			boolean isMultiByte = isMultibytePrefix((byte)content.charAt(i));
 			boolean foundMatch = false;
 			
-			//Allow characters that are not in the opcodes
+			// Allow characters that are not in the opcodes
 			if (allowedCharacters.contains(""+(char)content.charAt(i))) {
 				currentLine += (char)content.charAt(i);
 				continue;
@@ -968,11 +928,7 @@ public class BIDE {
 			if (content.charAt(i) == '"' && !escapeNextChar) {
 				currentPosIsString = !currentPosIsString;
 			}
-			if (content.charAt(i) == '\\' && !escapeNextChar) {
-				escapeNextChar = true;
-			} else {
-				escapeNextChar = false;
-			}
+			escapeNextChar = content.charAt(i) == '\\' && !escapeNextChar;
 			if (content.charAt(i) == '\'' && !currentPosIsString) {
 				currentPosIsComment = true;
 			}
@@ -988,7 +944,7 @@ public class BIDE {
 				for (int j = 0; j < opcodesSpaces.size()/3; j++) {
 					if (opcodesSpaces.get(j*3+1).equals("true") && opcodesSpaces.get(j*3).equalsIgnoreCase(hex)) {
 						
-						//Check for unary operators, which are there if there is another operator (and space) before it
+						// Check for unary operators, which are there if there is another operator (and space) before it
 						if (currentLine.length() > 1 && currentLine.charAt(currentLine.length()-1) == ' ' && (opcodesSpaces.get(j*3+2).equals(" + ")||opcodesSpaces.get(j*3+2).equals(" - "))) {
 							currentLine += opcodesSpaces.get(j*3+2).trim();
 						} else {
@@ -1003,13 +959,13 @@ public class BIDE {
 				}
 			}
 			
-			//Indent
+			// Indent
 			if (indent.contains(hex)) {
 				indentLevel++;
 				tabs += "\t";
 			}
 			
-			//Unindent
+			// Unindent
 			if (unindent.contains(hex) && indentLevel > 0) {
 				indentLevel--;
 				try {
@@ -1017,11 +973,11 @@ public class BIDE {
 				} catch (StringIndexOutOfBoundsException e) {}
 			}
 			
-			//line feed
+			// line feed
 			if (hex.equalsIgnoreCase("D")||hex.equalsIgnoreCase("C")) {
 				
 				currentLine = tabs + currentLine;
-				//remove tab if unindenting
+				// remove tab if unindenting
 				
 				if (unindentCurrentLineAndIndentNext) {
 					currentIndentLevel--;
@@ -1035,9 +991,8 @@ public class BIDE {
 					unindentCurrentLineAndIndentNext = false;
 				}
 				
-				//Replace "\nThen" by ":Then\n"
+				// Replace "\nThen" by ":Then\n"
 				if (i+3 < content.length() && content.substring(i, i+3).equals(new CasioString(new byte[]{0x0D, (byte)0xF7, 0x01}))) {
-					//System.out.println("Replacing a then");
 					currentLine += " :Then";
 					i += 2;
 				}
@@ -1049,10 +1004,10 @@ public class BIDE {
 				continue;
 			}
 			
-			//Test for ascii opcodes such as ->, =>
-			if ((hex.equalsIgnoreCase("3D") || hex.equalsIgnoreCase("99")) && i > 0) { //'=' or '-'
+			// Test for ascii opcodes such as ->, =>
+			if ((hex.equalsIgnoreCase("3D") || hex.equalsIgnoreCase("99")) && i > 0) { // '=' or '-'
 				short c = content.charAt(i-1);
-				if (hex.equalsIgnoreCase("3D") && (c == '!' || c == '>' || c == '<')) { //!= >= <=
+				if (hex.equalsIgnoreCase("3D") && (c == '!' || c == '>' || c == '<')) { // != >= <=
 					currentLine += "&=;";
 					continue;
 				}
@@ -1068,8 +1023,7 @@ public class BIDE {
 					}
 				}
 			}
-			
-			//System.out.println("Testing for opcode " + hex);
+
 			for (int j = 0; j < opcodes.size(); j++) {
 				if (hex.equalsIgnoreCase(opcodes.get(j).hex)) {
 					if (opcodes.get(j).unicode == null || BIDE.options.getProperty("allowUnicode").equals("false")) {
@@ -1087,7 +1041,6 @@ public class BIDE {
 						}
 					}
 					foundMatch = true;
-					//System.out.println("Matches opcode " + opcodes.get(j).ascii);
 					break;
 				}
 			}
@@ -1105,7 +1058,6 @@ public class BIDE {
 			
 			
 			if (isMultiByte) i++;
-			//System.out.print(Integer.toHexString(prog1.charAt(i)) + " ");
 		}
 		
 		lines.add(currentLine);
@@ -1128,8 +1080,7 @@ public class BIDE {
 		
 		try {
 			String line;
-			//BufferedReader br = new BufferedReader(new FileReader(new File(relativePath)));
-			BufferedReader br = new BufferedReader(new InputStreamReader(BIDE.class.getClass().getResourceAsStream("/opcodes.txt"), "UTF-8"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/opcodes.txt"), StandardCharsets.UTF_8));
 			while ((line = br.readLine()) != null) {
 				sb.append(line);
 				sb.append("\n");
@@ -1145,12 +1096,7 @@ public class BIDE {
 		opcodes = gson.fromJson(json, listType);
 		
 		//Order opcodes by inverse alphabetical order of their ascii string
-		Collections.sort(opcodes, new Comparator<Opcode>() {
-			@Override
-			public int compare(Opcode o1, Opcode o2) {
-				return o2.text.compareTo(o1.text);
-			}
-		});
+		opcodes.sort((o1, o2) -> o2.text.compareTo(o1.text));
 		
 		//Check for duplicates
 		for (int i = 0; i < opcodes.size(); i++) {
@@ -1264,14 +1210,12 @@ public class BIDE {
 	}
 	
 	public static boolean isMultibytePrefix(byte prefix) {
-		if (prefix == (byte)0xF7 ||
-				prefix == (byte)0x7F ||
-				prefix == (byte)0xF9 ||
-				prefix == (byte)0xE5 ||
-				prefix == (byte)0xE6 ||
-				prefix == (byte)0xE7)
-			return true;
-		return false;
+		return prefix == (byte) 0xF7 ||
+				prefix == (byte) 0x7F ||
+				prefix == (byte) 0xF9 ||
+				prefix == (byte) 0xE5 ||
+				prefix == (byte) 0xE6 ||
+				prefix == (byte) 0xE7;
 	}
 	
 	public static void cleanupStrings() {
@@ -1315,12 +1259,8 @@ public class BIDE {
 						if (lines[h].charAt(i) == '"' && !escapeNextChar) {
 							currentPosIsString = !currentPosIsString;
 						}
-						
-						if (lines[h].charAt(i) == '\\' && !escapeNextChar) {
-							escapeNextChar = true;
-						} else {
-							escapeNextChar = false;
-						}
+
+						escapeNextChar = lines[h].charAt(i) == '\\' && !escapeNextChar;
 						
 						if (lines[h].charAt(i) == '\'' && !currentPosIsString) {
 							currentPosIsComment = true;
@@ -1397,18 +1337,15 @@ public class BIDE {
 	            		System.out.println("A new version of BIDE ("+currentVersion+") is available.");
 	            	}
 	            }
-	        	//System.out.println(inputLine);
 	            
 	        }
 	        in.close();
 		} catch (Exception e) {
-			//e.printStackTrace();
 		}
 	}
 	
 	public static void error(String error) {
 		System.out.println("\nERROR: "+error+"\n");
-		//System.exit(0);
 	}
 	public static void error(String progName, String error) {
 		error(progName + ": " + error);

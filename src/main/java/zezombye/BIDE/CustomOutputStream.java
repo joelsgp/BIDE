@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.JTextArea;
 
 public class CustomOutputStream extends OutputStream {
-	private JTextArea output;
+	private final JTextArea output;
     private byte[] bytes = new byte[1024];
     private int currentBytePos = 0;
 

@@ -1,6 +1,6 @@
 package zezombye.BIDE;
 
-//Taken from B2C
+// Taken from B2C
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,7 +28,7 @@ public class IO {
 			}
 			file.createNewFile();
 			FileOutputStream out = new FileOutputStream(file.getAbsolutePath());
-			//Convert to byte[]
+			// Convert to byte[]
 			byte[] result = new byte[content.size()];
 			for(int i = 0; i < content.size(); i++) {
 			    result[i] = content.get(i);
@@ -40,7 +40,7 @@ public class IO {
 		}
 	}
 	
-	//Only use this for non-casio strings (ascii text)!
+	// Only use this for non-casio strings (ascii text)!
 	public static void writeStrToFile(File file, String content, boolean deleteFile) throws IOException {
 		if (deleteFile) {
 			file.delete();

@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -21,7 +22,7 @@ import com.sun.jna.win32.StdCallLibrary;
 public class EmulatorImport {
 	
 	public interface User32 extends StdCallLibrary {
-	    User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class);
+	    User32 INSTANCE = Native.loadLibrary("user32", User32.class);
 
 	    boolean EnumWindows(WinUser.WNDENUMPROC lpEnumFunc, Pointer arg);
 
@@ -39,7 +40,7 @@ public class EmulatorImport {
 
     final User32 user32 = User32.INSTANCE;
     HWND emulatorHWND = null;
-    int emuSleep = 50; //optimal sleep time between keypresses for the emulator
+    int emuSleep = 50; // optimal sleep time between keypresses for the emulator
     Robot robot;
     BufferedImage confirmation, memMenu, complete, beginBenchmark, endBenchmark;
     int screenX, screenY, screenWidth, screenHeight;
@@ -75,8 +76,8 @@ public class EmulatorImport {
     		inputKey(KeyEvent.VK_ENTER, emuSleep);
     		long timeBenchmark = System.currentTimeMillis();
     		long timeout = System.currentTimeMillis()+10000;
-    		while (!testImgEquality(getEmuScreen(), endBenchmark) && System.currentTimeMillis() < timeout) {};
-    		long duration = System.currentTimeMillis()-timeBenchmark;
+    		while (!testImgEquality(getEmuScreen(), endBenchmark) && System.currentTimeMillis() < timeout) {}
+			long duration = System.currentTimeMillis()-timeBenchmark;
     		System.out.println(
 					"Test " + i + ": " + duration + "ms"
 							+ (System.currentTimeMillis() > timeout ? " or more (limit reached)" : "")
@@ -92,8 +93,8 @@ public class EmulatorImport {
     
     public Object findEmulator() {
 		emulatorHWND = null;
-		//menu = ImageIO.read(new File("C:\\Users\\Catherine\\Desktop\\menu.png"));
-		//long time = System.currentTimeMillis();
+		// menu = ImageIO.read(new File("C:\\Users\\Catherine\\Desktop\\menu.png"));
+		// long time = System.currentTimeMillis();
 		ArrayList<String> titles = enumWindows();
 		if (titles.contains("Ouvrir")) {
 			BIDE.error("There is another window titled \"Ouvrir\"");
@@ -110,11 +111,11 @@ public class EmulatorImport {
     
 	public void autoImport(String path) {
     	if (findEmulator() == null) return;
-    	//storeEmuScreen();
-    	//The user is supposed to be on the menu
+    	// storeEmuScreen();
+    	// The user is supposed to be on the menu
     	inputKey(KeyEvent.VK_PAGE_DOWN, emuSleep);
     	
-    	//Go to memory
+    	// Go to memory
     	inputKey('F', emuSleep);
     	
     	long end = System.currentTimeMillis()+1000;
@@ -162,8 +163,6 @@ public class EmulatorImport {
     	//Now the transfer is completed
     	inputKey(KeyEvent.VK_PAGE_DOWN, emuSleep);
     	inputKey('B', emuSleep);
-		//System.out.println(System.currentTimeMillis()-time);
-		
 	}
 	
 	public boolean testImgEquality(BufferedImage image1, BufferedImage image2) {
