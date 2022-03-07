@@ -9,13 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
@@ -117,54 +115,28 @@ public class UI {
 
 		JMenuBar menuBar = new JMenuBar();
 		ToolbarButton open = new ToolbarButton("openFile.png", "Open file (ctrl+O)");
-		open.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				openFile(false);
-			}
-		});
+		open.addActionListener(arg0 -> openFile(false));
 		
 
 		window.getRootPane().registerKeyboardAction(open.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		ToolbarButton save = new ToolbarButton("saveFile.png", "Save file (ctrl+S)");
-		save.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				saveFile(true, false, false);
-			}
-		});
+		save.addActionListener(arg0 -> saveFile(true, false, false));
 		
 		window.getRootPane().registerKeyboardAction(save.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		
 		ToolbarButton newProg = new ToolbarButton("newProg.png", "New Basic Casio program");
-		newProg.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_PROG);
-			}
-		});
+		newProg.addActionListener(arg0 -> createNewTab(BIDE.TYPE_PROG));
 		
 		ToolbarButton newPict = new ToolbarButton("newPict.png", "New Picture");
-		newPict.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_PICT);
-			}
-		});
+		newPict.addActionListener(arg0 -> createNewTab(BIDE.TYPE_PICT));
 		
 		ToolbarButton newCapt = new ToolbarButton("newCapt.png", "New Capture");
-		newCapt.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_CAPT);
-			}
-		});
+		newCapt.addActionListener(arg0 -> createNewTab(BIDE.TYPE_CAPT));
 		
 		ToolbarButton run = new ToolbarButton("run.png", "Run file (ctrl+R)");
-		run.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				saveFile(true, false, true);
-			}
-		});
+		run.addActionListener(arg0 -> saveFile(true, false, true));
 
 		window.getRootPane().registerKeyboardAction(run.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
@@ -184,31 +156,21 @@ public class UI {
 		JMenu fileMenu = new JMenu("File");
 		menuBar2.add(fileMenu);
 		JMenuItem importFile = new JMenuItem("Open Basic Casio file");
-		importFile.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				openFile(false);
-			}
-		});
+		importFile.addActionListener(e -> openFile(false));
 		fileMenu.add(importFile);
 		JMenuItem addToFile = new JMenuItem("Open & add to current file");
-		addToFile.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				openFile(true);
-			}
-		});
+		addToFile.addActionListener(e -> openFile(true));
 		fileMenu.add(addToFile);
 		
 		JMenuItem saveg1m = new JMenuItem("Save to g1m");
-		saveg1m.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				try {
-					if (BIDE.pathToSavedG1M.isEmpty()) {
-						BIDE.pathToSavedG1M = BIDE.pathToG1M;
-					}
-					BIDE.pathToSavedG1M = BIDE.pathToSavedG1M.substring(0, BIDE.pathToSavedG1M.lastIndexOf("."))+".g1m";
-				} catch (Exception e1) {}
-				saveFile(true, true, false);
-			}
+		saveg1m.addActionListener(e -> {
+			try {
+				if (BIDE.pathToSavedG1M.isEmpty()) {
+					BIDE.pathToSavedG1M = BIDE.pathToG1M;
+				}
+				BIDE.pathToSavedG1M = BIDE.pathToSavedG1M.substring(0, BIDE.pathToSavedG1M.lastIndexOf("."))+".g1m";
+			} catch (Exception ignored) {}
+			saveFile(true, true, false);
 		});
 		fileMenu.add(saveg1m);
 		JMenuItem saveTxt = new JMenuItem("Save to .bide file");
@@ -219,7 +181,7 @@ public class UI {
 						BIDE.pathToSavedG1M = BIDE.pathToG1M;
 					}
 					BIDE.pathToSavedG1M = BIDE.pathToSavedG1M.substring(0, BIDE.pathToSavedG1M.lastIndexOf("."))+".bide";
-				} catch (Exception e1) {}
+				} catch (Exception ignored) {}
 				saveFile(false, true, false);
 			}
 		});
@@ -229,9 +191,6 @@ public class UI {
 		menuBar2.add(editMenu);
 		
 		JMenuItem showReplaceDialog = new JMenuItem(new AbstractAction() {
-			
-			
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				window.replaceDialog.setVisible(true);
@@ -245,64 +204,34 @@ public class UI {
 		JMenu toolsMenu = new JMenu("Tools");
 		menuBar2.add(toolsMenu);
 		JMenuItem multiDrawstat = new JMenuItem("Multi Drawstat Generator");
-		multiDrawstat.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				new MultiDrawstatGenerator();
-			}
-		});
+		multiDrawstat.addActionListener(arg0 -> new MultiDrawstatGenerator());
 		toolsMenu.add(multiDrawstat);
 		JMenuItem imgToPict = new JMenuItem("Image to picture");
-		imgToPict.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				importImage(true);
-			}
-		});
+		imgToPict.addActionListener(arg0 -> importImage(true));
 		toolsMenu.add(imgToPict);
 		JMenuItem imgToMultiDrawstat = new JMenuItem("Image to Multi Drawstat");
-		imgToMultiDrawstat.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				importImage(false);
-			}
-		});
+		imgToMultiDrawstat.addActionListener(arg0 -> importImage(false));
 		JMenuItem showOptions = new JMenuItem("Show/Edit options");
-		showOptions.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				try {
-					Desktop.getDesktop().open(new File(BIDE.pathToOptions));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		showOptions.addActionListener(arg0 -> {
+			try {
+				Desktop.getDesktop().open(new File(BIDE.pathToOptions));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		});
 		toolsMenu.add(showOptions);
 		JMenuItem showOpcodes = new JMenuItem("Show list of opcodes");
-		showOpcodes.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_OPCODE);
-			}
-		});
+		showOpcodes.addActionListener(arg0 -> createNewTab(BIDE.TYPE_OPCODE));
 		toolsMenu.add(showOpcodes);
 		JMenuItem showChars = new JMenuItem("Show characters list");
-		showChars.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_CHARLIST);
-			}
-		});
+		showChars.addActionListener(arg0 -> createNewTab(BIDE.TYPE_CHARLIST));
 		toolsMenu.add(showChars);
 		JMenuItem showColoration = new JMenuItem("Show syntax coloration test");
-		showColoration.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				createNewTab(BIDE.TYPE_COLORATION);
-			}
-		});
+		showColoration.addActionListener(arg0 -> createNewTab(BIDE.TYPE_COLORATION));
 		toolsMenu.add(showColoration);
 		
 		JMenuItem cleanup = new JMenuItem("Clean up strings");
-		cleanup.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				BIDE.cleanupStrings();
-			}
-		});
+		cleanup.addActionListener(arg0 -> BIDE.cleanupStrings());
 		toolsMenu.add(cleanup);
 		
 		JMenu emulatorMenu = new JMenu("Emulator");
@@ -312,29 +241,17 @@ public class UI {
 		}
 		
 		JMenuItem takeEmuScreenshot = new JMenuItem("Take emulator screenshot");
-		takeEmuScreenshot.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				BIDE.autoImport.storeEmuScreenshot();
-			}
-		});
+		takeEmuScreenshot.addActionListener(arg0 -> BIDE.autoImport.storeEmuScreenshot());
 		emulatorMenu.add(takeEmuScreenshot);
 		JMenuItem takeEmuScreenScreenshot = new JMenuItem("Take emulator screen screenshot");
-		takeEmuScreenScreenshot.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				BIDE.autoImport.storeEmuScreen();
-			}
-		});
+		takeEmuScreenScreenshot.addActionListener(arg0 -> BIDE.autoImport.storeEmuScreen());
 		emulatorMenu.add(takeEmuScreenScreenshot);
 		JMenuItem benchmark = new JMenuItem("Run benchmark");
-		benchmark.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				new Thread(new Runnable() {
-					public void run() {
-						BIDE.autoImport.benchmark();
-					}
-				}).start();
+		benchmark.addActionListener(arg0 -> new Thread(new Runnable() {
+			public void run() {
+				BIDE.autoImport.benchmark();
 			}
-		});
+		}).start());
 		emulatorMenu.add(benchmark);
 		window.setJMenuBar(menuBar2);
 
@@ -464,7 +381,7 @@ public class UI {
 		jtp.setSelectedIndex(jtp.getTabCount()-1);
 	    try {
 	    	getTextPane().setCaretPosition(0);
-	    } catch (NullPointerException e) {
+	    } catch (NullPointerException ignored) {
 	    }
 	}
 	
@@ -482,78 +399,72 @@ public class UI {
 	
 	public void openFile(boolean addToCurrentFile, File[] input) {
 		
-		new Thread(new Runnable() {
-			public void run() {
-				if (!addToCurrentFile) {
-					BIDE.g1mParts = new ArrayList<G1MPart>();
-				}
-				for (int i = 0; i < input.length; i++) {
-		    		BIDE.pathToG1M = input[i].getPath();
-		    		
-		    		
-				    try {
-				    	G1MParser g1mparser = new G1MParser(BIDE.pathToG1M);
-						g1mparser.readG1M();
-						
-						if (!g1mparser.isValid()) {
-							BIDE.readFromTxt(BIDE.pathToG1M);
-				    	} else {
-				    		BIDE.readFromG1M(BIDE.pathToG1M);
-				    	}
-				    	
-						if (!addToCurrentFile) {
-			    			BIDE.pathToSavedG1M = BIDE.pathToG1M;
-			    		}
-						
-				    	BIDE.g1mParts.sort(new Comparator<G1MPart>() {
+		new Thread(() -> {
+			if (!addToCurrentFile) {
+				BIDE.g1mParts = new ArrayList<>();
+			}
+			for (File file : input) {
+				BIDE.pathToG1M = file.getPath();
 
-							@Override
-							public int compare(G1MPart arg0, G1MPart arg1) {
-								if (arg0.type == arg1.type) {
-									return arg0.name.compareTo(arg1.name);
-								} else {
-									return Integer.compare(arg0.type, arg1.type);
-								}
-							}
-				    	});
-				    	
-				    	
-				    } catch (NullPointerException e) {
-				    	if (BIDE.debug) {
-				    		System.err.print("debug exception: ");
-				    		e.printStackTrace();
-				    	}
-				    } catch (NoSuchFileException e) {
-				    	BIDE.error("The file at \"" + BIDE.pathToG1M + "\" does not exist.");
-				    } catch (AccessDeniedException e) {
-				    	BIDE.error("BIDE is denied access to the file at \"" + BIDE.pathToG1M + "\"");
-				    } catch (IOException e) {
+
+				try {
+					G1MParser g1mparser = new G1MParser(BIDE.pathToG1M);
+					g1mparser.readG1M();
+
+					if (!g1mparser.isValid()) {
+						BIDE.readFromTxt(BIDE.pathToG1M);
+					} else {
+						BIDE.readFromG1M(BIDE.pathToG1M);
+					}
+
+					if (!addToCurrentFile) {
+						BIDE.pathToSavedG1M = BIDE.pathToG1M;
+					}
+
+					BIDE.g1mParts.sort((arg0, arg1) -> {
+						if (arg0.type == arg1.type) {
+							return arg0.name.compareTo(arg1.name);
+						} else {
+							return Integer.compare(arg0.type, arg1.type);
+						}
+					});
+
+
+				} catch (NullPointerException e) {
+					if (BIDE.debug) {
+						System.err.print("debug exception: ");
 						e.printStackTrace();
 					}
-				    if (BIDE.g1mParts.size() != 0) {
-					    System.out.println("Finished loading g1m");
-				    }
-		    	}
-		    	
-		    	jtp.removeAll();
-				new SwingWorker<Void, G1MPart>() {
-		        	@Override
-		            protected Void doInBackground() {
-		        		for (int i = 0; i < BIDE.g1mParts.size(); i++) {
-		        			jtp.addTab(BIDE.g1mParts.get(i).name, BIDE.g1mParts.get(i).comp);
-		        		}
-		        		try {
-		    		    	getTextPane().setCaretPosition(0);
-		    		    } catch (NullPointerException e) {
-		    		    	if (BIDE.debug) {
-		    		    		System.err.print("debug exception: ");
-		    		    		e.printStackTrace();
-		    		    	}
-		    		    }
-		                return null;
-		            }
-		        }.execute();
+				} catch (NoSuchFileException e) {
+					BIDE.error("The file at \"" + BIDE.pathToG1M + "\" does not exist.");
+				} catch (AccessDeniedException e) {
+					BIDE.error("BIDE is denied access to the file at \"" + BIDE.pathToG1M + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if (BIDE.g1mParts.size() != 0) {
+					System.out.println("Finished loading g1m");
+				}
 			}
+
+			jtp.removeAll();
+			new SwingWorker<Void, G1MPart>() {
+				@Override
+				protected Void doInBackground() {
+					for (int i = 0; i < BIDE.g1mParts.size(); i++) {
+						jtp.addTab(BIDE.g1mParts.get(i).name, BIDE.g1mParts.get(i).comp);
+					}
+					try {
+						getTextPane().setCaretPosition(0);
+					} catch (NullPointerException e) {
+						if (BIDE.debug) {
+							System.err.print("debug exception: ");
+							e.printStackTrace();
+						}
+					}
+					return null;
+				}
+			}.execute();
 		}).start();
     	
     }
@@ -672,7 +583,8 @@ public class UI {
 					for (int j = 0; j < img.getHeight(); j++) {
 						for (int i = 0; i < 128; i++) {
 							if (img.getRGB(i, j) == Color.BLACK.getRGB()) {
-								binary[i/8+16*j] = (byte) (binary[i/8+16*j] | (0b10000000 >> (i%8)));
+								int calculatedIndex = i/8+16*j;
+								binary[calculatedIndex] = (byte) (binary[calculatedIndex] | (0b10000000 >> (i%8)));
 							}
 						}
 					}
@@ -747,33 +659,25 @@ class ButtonTabComponent extends JPanel {
         label.setFont(new Font(BIDE.options.getProperty("progFontName"), Font.PLAIN, 12));
 
         add(label);
-        //add more space between the label and the button
-        //label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
         //tab button
         add(Box.createRigidArea(new Dimension(8,17)));
         JButton button = new TabButton();
         add(button);
-        //add more space to the top of the component
-        //setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
     }
 
     private class TabButton extends JButton implements ActionListener {
         public TabButton() {
-            //int size = 17;
             setPreferredSize(new Dimension(9, 17));
-            //setToolTipText("close this tab");
             //Make the button looks the same for all Laf's
             setUI(new BasicButtonUI());
             //Make it transparent
             setContentAreaFilled(false);
             //No need to be focusable
             setFocusable(false);
-            //setBorder(BorderFactory.createEtchedBorder());
             setBorderPainted(true);
             setRolloverEnabled(true);
             //Close the proper tab by clicking the button
             addActionListener(this);
-            //this.setBorder(BorderFactory.createBevelBorder(1, Color.RED, Color.GREEN));
         }
 
         public void actionPerformed(ActionEvent e) {

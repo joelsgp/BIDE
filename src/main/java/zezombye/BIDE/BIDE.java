@@ -14,10 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -332,7 +329,7 @@ public class BIDE {
 		
 		G1MWrapper g1mwrapper = new G1MWrapper();
 		// Parse text file
-		G1MPart currentPart = null;
+		G1MPart currentPart;
 		clearMacros();
 
 		for (int h = 0; h < g1mParts.size(); h++) {
@@ -406,15 +403,15 @@ public class BIDE {
 								replacement = macro.substring(text.length()+1);
 								System.out.println("replacement = "+replacement);
 								if (args != null) {
-									if (replacement.indexOf("%") >= 0) {
+									if (replacement.contains("%")) {
 										error(currentPart.name, i+1, "Function macros cannot contain percents! Use hex escape.");
 										return;
 									}
-									for (int j = 0; j < args.length; j++) {
+									for (String arg : args) {
 										String oldReplacement = replacement;
-										replacement = replacement.replaceAll("(?<!\\w)"+args[j]+"(?!\\w)", "%"+args[j]+"%");
+										replacement = replacement.replaceAll("(?<!\\w)" + arg + "(?!\\w)", "%" + arg + "%");
 										if (oldReplacement.equals(replacement)) {
-											error(currentPart.name, i+1, "Argument "+args[j]+" is not used in replacement!");
+											error(currentPart.name, i + 1, "Argument " + arg + " is not used in replacement!");
 											return;
 										}
 									}
@@ -433,12 +430,7 @@ public class BIDE {
 			g1mParts.set(h, currentPart);
 			
 		}
-		Collections.sort(macros, new Comparator<Macro>() {
-			@Override
-			public int compare(Macro o1, Macro o2) {
-				return o2.text.compareTo(o1.text);
-			}
-		});
+		macros.sort((o1, o2) -> o2.text.compareTo(o1.text));
 		if (g1mParts.size() == 0) {
 			error("No programs detected!");
 			return;
@@ -448,76 +440,76 @@ public class BIDE {
 		}
 		// Add each part (program) of the ascii file
 		byte[] padding = {0,0,0,0,0,0,0,0};
-		for (int i = 0; i < g1mParts.size(); i++) {
-			
-			CasioString name = new CasioString(asciiToCasio(g1mParts.get(i).name, true, g1mParts.get(i).name+".name", 1, macros));
+		for (G1MPart g1mPart : g1mParts) {
+
+			CasioString name = new CasioString(asciiToCasio(g1mPart.name, true, g1mPart.name + ".name", 1, macros));
 			CasioString part = new CasioString("");
-			
-			if (!g1mParts.get(i).isEditedSinceLastSaveToG1M && g1mParts.get(i).type == BIDE.TYPE_PROG) {
-				System.out.println("Already parsed "+ g1mParts.get(i).name);
-				part.add(g1mParts.get(i).binaryContent);
+
+			if (!g1mPart.isEditedSinceLastSaveToG1M && g1mPart.type == BIDE.TYPE_PROG) {
+				System.out.println("Already parsed " + g1mPart.name);
+				part.add(g1mPart.binaryContent);
 			} else {
-			
-				System.out.println("Parsing \""+ g1mParts.get(i).name+"\"");
-				
+
+				System.out.println("Parsing \"" + g1mPart.name + "\"");
+
 				boolean isBaseProgram = false;
-				if (name.endsWith(new CasioString(new byte[]{(byte)0xE5, (byte)0xB5}))) {
-					name = name.substring(0, name.length()-2);
+				if (name.endsWith(new CasioString(new byte[]{(byte) 0xE5, (byte) 0xB5}))) {
+					name = name.substring(0, name.length() - 2);
 					isBaseProgram = true;
 				}
-				
+
 				if (name.length() > 8 && !(name.length() == 10 && name.charAt(8) == 0xE5 && name.charAt(9) == 0xB5)) {
-					error("Program \""+ g1mParts.get(i).name+"\" has a name too long (8 characters max)!");
+					error("Program \"" + g1mPart.name + "\" has a name too long (8 characters max)!");
 					return;
 				}
-							
-				if (g1mParts.get(i).type == BIDE.TYPE_CAPT && !g1mParts.get(i).name.startsWith("CAPT")) {
-					error("Capture \""+ g1mParts.get(i).name+"\"'s name should start with \"CAPT\"!");
+
+				if (g1mPart.type == BIDE.TYPE_CAPT && !g1mPart.name.startsWith("CAPT")) {
+					error("Capture \"" + g1mPart.name + "\"'s name should start with \"CAPT\"!");
 					return;
-				} else if (g1mParts.get(i).type == BIDE.TYPE_PICT && !g1mParts.get(i).name.startsWith("PICT")) {
-					error("Picture \""+ g1mParts.get(i).name+"\"'s name should start with \"PICT\"!");
+				} else if (g1mPart.type == BIDE.TYPE_PICT && !g1mPart.name.startsWith("PICT")) {
+					error("Picture \"" + g1mPart.name + "\"'s name should start with \"PICT\"!");
 					return;
 				}
-				if (g1mParts.get(i).type == BIDE.TYPE_CAPT || g1mParts.get(i).type == BIDE.TYPE_PICT) {
+				if (g1mPart.type == BIDE.TYPE_CAPT || g1mPart.type == BIDE.TYPE_PICT) {
 					try {
-						int nb = Integer.parseInt(g1mParts.get(i).name.substring(4));
+						int nb = Integer.parseInt(g1mPart.name.substring(4));
 						if (nb < 1 || nb > 20) {
-							error("Number of "+ g1mParts.get(i).name+" should be 1-20!");
+							error("Number of " + g1mPart.name + " should be 1-20!");
 							return;
 						}
 					} catch (NumberFormatException e) {
-						error(g1mParts.get(i).name, "Invalid picture/capture number!");
+						error(g1mPart.name, "Invalid picture/capture number!");
 						return;
 					}
 				}
-				
-				name.add(Arrays.copyOfRange(padding, 0, 8-name.length()));
-				
-				if (g1mParts.get(i).type == BIDE.TYPE_PROG) {
-					CasioString password = new CasioString(asciiToCasio(g1mParts.get(i).option, true, g1mParts.get(i).name+".password", 2, macros));
+
+				name.add(Arrays.copyOfRange(padding, 0, 8 - name.length()));
+
+				if (g1mPart.type == BIDE.TYPE_PROG) {
+					CasioString password = new CasioString(asciiToCasio(g1mPart.option, true, g1mPart.name + ".password", 2, macros));
 					if (password.length() > 8) {
-						error("Program \""+ g1mParts.get(i).name+"\" has a password too long (8 characters max)!");
+						error("Program \"" + g1mPart.name + "\" has a password too long (8 characters max)!");
 						return;
 					}
-					password.add(Arrays.copyOfRange(padding, 0, 8-password.length()));
+					password.add(Arrays.copyOfRange(padding, 0, 8 - password.length()));
 					part.add(password);
-					
+
 					if (isBaseProgram) {
-						part.add(new byte[]{1,0});
+						part.add(new byte[]{1, 0});
 					} else {
-						part.add(new byte[]{0,0});
+						part.add(new byte[]{0, 0});
 					}
-					part.add(asciiToCasio((String) g1mParts.get(i).content, false, g1mParts.get(i).name, 1, macros));
-					part.add(Arrays.copyOfRange(padding, 0, 4-part.length()%4));
-				} else if (g1mParts.get(i).type == BIDE.TYPE_PICT){
-					part.add((Byte[]) g1mParts.get(i).content);
+					part.add(asciiToCasio((String) g1mPart.content, false, g1mPart.name, 1, macros));
+					part.add(Arrays.copyOfRange(padding, 0, 4 - part.length() % 4));
+				} else if (g1mPart.type == BIDE.TYPE_PICT) {
+					part.add((Byte[]) g1mPart.content);
 				} else {
-					part.add(new byte[]{0x00, (byte)0x80, 0x00, 0x40});
-					part.add((Byte[]) g1mParts.get(i).content);
+					part.add(new byte[]{0x00, (byte) 0x80, 0x00, 0x40});
+					part.add((Byte[]) g1mPart.content);
 				}
-				g1mParts.get(i).binaryContent = new CasioString(part);
+				g1mPart.binaryContent = new CasioString(part);
 			}
-			g1mwrapper.addPart(part, name, g1mParts.get(i).type);
+			g1mwrapper.addPart(part, name, g1mPart.type);
 		}
 		g1mwrapper.generateG1M(destPath);
 		
@@ -531,33 +523,31 @@ public class BIDE {
 	
 	public static void writeToTxt(String destPath) {
 		System.out.println("Saving to "+destPath+"...");
-		String result = "";
-		for (int i = 0; i < g1mParts.size(); i++) {
-			if (g1mParts.get(i).type == BIDE.TYPE_PROG) {
+		StringBuilder result = new StringBuilder();
+		for (G1MPart g1mPart : g1mParts) {
+			if (g1mPart.type == BIDE.TYPE_PROG) {
 				if (!BIDE.isCLI) {
-					result += ((ProgScrollPane) g1mParts.get(i).comp).textPane.getText();
+					result.append(((ProgScrollPane) g1mPart.comp).textPane.getText());
 				} else {
-					result += g1mParts.get(i).content;
+					result.append(g1mPart.content);
 				}
-				result += "\n#End of part\n";
-			} else if (g1mParts.get(i).type == BIDE.TYPE_PICT || g1mParts.get(i).type == BIDE.TYPE_CAPT) {
-				Picture pict = ((Picture)((JScrollPane)(g1mParts.get(i).comp)).getViewport().getView());
-				if (g1mParts.get(i).type == BIDE.TYPE_PICT) {
-					result += "#Picture name: ";
+				result.append("\n#End of part\n");
+			} else if (g1mPart.type == BIDE.TYPE_PICT || g1mPart.type == BIDE.TYPE_CAPT) {
+				Picture pict = ((Picture) ((JScrollPane) (g1mPart.comp)).getViewport().getView());
+				if (g1mPart.type == BIDE.TYPE_PICT) {
+					result.append("#Picture name: ");
 				} else {
-					result += "#Capture name: ";
+					result.append("#Capture name: ");
 				}
-				result += pict.namejtf.getText() + "\n"
-						+ "#Size: 0x" + pict.sizejtf.getText() + "\n"
-						+ pictToAscii(pict.pictPanel.pixels);
-				if (g1mParts.get(i).type != BIDE.TYPE_CAPT) {
-					result += pictWarning + pictToAscii(pict.pictPanel2.pixels);
+				result.append(pict.namejtf.getText()).append("\n").append("#Size: 0x").append(pict.sizejtf.getText()).append("\n").append(pictToAscii(pict.pictPanel.pixels));
+				if (g1mPart.type != BIDE.TYPE_CAPT) {
+					result.append(pictWarning).append(pictToAscii(pict.pictPanel2.pixels));
 				}
-				result += "\n#End of part\n";
+				result.append("\n#End of part\n");
 			}
 		}
 		try {
-			IO.writeStrToFile(new File(destPath), result, true);
+			IO.writeStrToFile(new File(destPath), result.toString(), true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -566,9 +556,7 @@ public class BIDE {
 	
 	public static String pictToAscii(Byte[] content) {
 		StringBuilder asciiResult = new StringBuilder();
-		for (int i = 0; i < 130; i++) {
-			asciiResult.append("▄");
-		}
+		asciiResult.append("▄".repeat(130));
 		asciiResult.append("\n");
 		for (int i = 0; i < 64; i+=2) {
 			asciiResult.append("█");
@@ -599,9 +587,7 @@ public class BIDE {
 			}
 			asciiResult.append("█\n");
 		}
-		for (int i = 0; i < 130; i++) {
-			asciiResult.append("▀");
-		}
+		asciiResult.append("▀".repeat(130));
 		return asciiResult.toString();
 	}
 	
@@ -609,7 +595,7 @@ public class BIDE {
 		// Strip border
 		// Split on lines
 		String[] lines = content.split("\\n|\\r|\\r\\n");
-		String binary = "";
+		StringBuilder binary = new StringBuilder();
 		ArrayList<Byte> bytes = new ArrayList<Byte>();
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].isEmpty() || lines[i].startsWith("'") || lines[i].startsWith("#") || lines[i].startsWith("▀") || lines[i].startsWith("▄")) {
@@ -631,9 +617,9 @@ public class BIDE {
 			// Iterate twice on the line to convert to ascii binary
 			for (int j = 0; j < 128; j++) {
 				if (lines[i].charAt(j) == '▀' || lines[i].charAt(j) == '█') {
-					binary += '1';
+					binary.append('1');
 				} else if (lines[i].charAt(j) == '▄' || lines[i].charAt(j) == ' ') {
-					binary += '0';
+					binary.append('0');
 				} else {
 					error(progName, i+startLine, "Disallowed character '"+lines[i].charAt(j)+"' in picture!");
 					return null;
@@ -641,9 +627,9 @@ public class BIDE {
 			}
 			for (int j = 0; j < 128; j++) {
 				if (lines[i].charAt(j) == '▄' || lines[i].charAt(j) == '█') {
-					binary += '1';
+					binary.append('1');
 				} else {
-					binary += '0';
+					binary.append('0');
 				}
 			}
 		}
@@ -723,12 +709,12 @@ public class BIDE {
 				// Test for macros
 				if (!allowUnknownOpcodes && !currentPosIsString && !currentPosIsComment) {
 					boolean foundMacro = false;
-					for (int j = 0; j < macros.size(); j++) {
-						if (macros.get(j).isFunction) {
-							
-							if (lines[h].startsWith(macros.get(j).text.substring(0, macros.get(j).text.indexOf("(")+1), i)) {
-								
-								System.out.println("Found match for function macro "+macros.get(j).text);
+					for (Macro macro : macros) {
+						if (macro.isFunction) {
+
+							if (lines[h].startsWith(macro.text.substring(0, macro.text.indexOf("(") + 1), i)) {
+
+								System.out.println("Found match for function macro " + macro.text);
 								// Get location of closing parenthesis
 								int depth = 0;
 								int beginParenthesisIndex = lines[h].indexOf("(", i);
@@ -738,7 +724,7 @@ public class BIDE {
 								ArrayList<Integer> commaPos = new ArrayList<Integer>();
 								commaPos.add(beginParenthesisIndex);
 								try {
-									for (k = beginParenthesisIndex+1;; k++) {
+									for (k = beginParenthesisIndex + 1; ; k++) {
 										if (lines[h].charAt(k) == '"' && !escapeNextChar2) {
 											currentPosIsString2 = !currentPosIsString2;
 										}
@@ -760,72 +746,70 @@ public class BIDE {
 									e.printStackTrace();
 									return null;
 								}
-								
+
 								commaPos.add(k);
-								
-								int nbArgs = commaPos.size()-1;
-								if (nbArgs != macros.get(j).args.length) {
+
+								int nbArgs = commaPos.size() - 1;
+								if (nbArgs != macro.args.length) {
 									continue;
 								}
-								
+
 								String[] args = new String[nbArgs];
-								
+
 								for (int l = 0; l < nbArgs; l++) {
-									args[l] = lines[h].substring(commaPos.get(l)+1, commaPos.get(l+1));
+									args[l] = lines[h].substring(commaPos.get(l) + 1, commaPos.get(l + 1));
 								}
-								
-								System.out.println("args = "+Arrays.toString(args));
-								String replacement = macros.get(j).replacement;
+
+								System.out.println("args = " + Arrays.toString(args));
+								String replacement = macro.replacement;
 								for (int l = 0; l < nbArgs; l++) {
-									replacement = replacement.replaceAll("%"+macros.get(j).args[l]+"%", args[l].replaceAll("\\\\", "\\\\\\\\"));
+									replacement = replacement.replaceAll("%" + macro.args[l] + "%", args[l].replaceAll("\\\\", "\\\\\\\\"));
 								}
-								System.out.println("Replacement : "+replacement);
-								lines[h] = lines[h].substring(0, i) + replacement + lines[h].substring(k+1);
-								foundMacro = true;
+								System.out.println("Replacement : " + replacement);
+								lines[h] = lines[h].substring(0, i) + replacement + lines[h].substring(k + 1);
 								break;
-								
+
 							}
-							
+
 						} else {
 
-							if (lines[h].startsWith(macros.get(j).text, i)) {
-								lines[h] = lines[h].substring(0, i) + macros.get(j).replacement + lines[h].substring(i+macros.get(j).text.length());
-								foundMacro = true;
+							if (lines[h].startsWith(macro.text, i)) {
+								lines[h] = lines[h].substring(0, i) + macro.replacement + lines[h].substring(i + macro.text.length());
 								break;
 							}
 						}
 					}
 				}
-				
-				
-				for (int j = 0; j < opcodes.size(); j++) {
-					
+
+
+				for (Opcode opcode : opcodes) {
+
 					// If string, skip opcodes that are not entities/characters in order to avoid FA-124ing
 					if (allowUnknownOpcodes || currentPosIsString || currentPosIsComment) {
-						if (opcodes.get(j).text.length() != 1
-								&& !opcodes.get(j).text.startsWith("&")
-								&& !opcodes.get(j).text.equals("->")
-								&& !opcodes.get(j).text.equals("=>")
-								&& !opcodes.get(j).text.equals("!=")
-								&& !opcodes.get(j).text.equals(">=")
-								&& !opcodes.get(j).text.equals("<=")) {
+						if (opcode.text.length() != 1
+								&& !opcode.text.startsWith("&")
+								&& !opcode.text.equals("->")
+								&& !opcode.text.equals("=>")
+								&& !opcode.text.equals("!=")
+								&& !opcode.text.equals(">=")
+								&& !opcode.text.equals("<=")) {
 							continue;
 						}
 					}
-					
-					if (lines[h].startsWith(opcodes.get(j).text, i) || (opcodes.get(j).unicode != null && lines[h].startsWith(opcodes.get(j).unicode, i))) {
+
+					if (lines[h].startsWith(opcode.text, i) || (opcode.unicode != null && lines[h].startsWith(opcode.unicode, i))) {
 						foundMatch = true;
-						
-						if (opcodes.get(j).hex.length() > 2) {
-							result.add(Integer.parseInt(opcodes.get(j).hex.substring(0, 2), 16));
-							result.add(Integer.parseInt(opcodes.get(j).hex.substring(2), 16));
-						} else if (opcodes.get(j).hex.length() > 0) {
-							result.add(Integer.parseInt(opcodes.get(j).hex, 16));
+
+						if (opcode.hex.length() > 2) {
+							result.add(Integer.parseInt(opcode.hex.substring(0, 2), 16));
+							result.add(Integer.parseInt(opcode.hex.substring(2), 16));
+						} else if (opcode.hex.length() > 0) {
+							result.add(Integer.parseInt(opcode.hex, 16));
 						}
-						if (lines[h].startsWith(opcodes.get(j).text, i)) {
-							i += opcodes.get(j).text.length()-1;
+						if (lines[h].startsWith(opcode.text, i)) {
+							i += opcode.text.length() - 1;
 						} else {
-							i += opcodes.get(j).unicode.length()-1;
+							i += opcode.unicode.length() - 1;
 						}
 						break;
 					}
@@ -857,7 +841,6 @@ public class BIDE {
 			}
 			
 		}
-		
 		
 		return result;
 	}
@@ -897,9 +880,9 @@ public class BIDE {
 				"A9", options.getProperty("spacesFor*"), " * ",
 				"B9", options.getProperty("spacesFor/"), " / ");
 		
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		String tabs = "";
-		String currentLine = "";
+		StringBuilder currentLine = new StringBuilder();
 		int indentLevel = 0;
 		int currentIndentLevel = indentLevel;
 		boolean unindentCurrentLineAndIndentNext = false;
@@ -914,7 +897,7 @@ public class BIDE {
 			
 			// Allow characters that are not in the opcodes
 			if (allowedCharacters.contains(""+(char)content.charAt(i))) {
-				currentLine += (char)content.charAt(i);
+				currentLine.append((char) content.charAt(i));
 				continue;
 			}
 			String hex = Integer.toHexString(content.charAt(i)&0xFF);
@@ -946,9 +929,9 @@ public class BIDE {
 						
 						// Check for unary operators, which are there if there is another operator (and space) before it
 						if (currentLine.length() > 1 && currentLine.charAt(currentLine.length()-1) == ' ' && (opcodesSpaces.get(j*3+2).equals(" + ")||opcodesSpaces.get(j*3+2).equals(" - "))) {
-							currentLine += opcodesSpaces.get(j*3+2).trim();
+							currentLine.append(opcodesSpaces.get(j * 3 + 2).trim());
 						} else {
-							currentLine += opcodesSpaces.get(j*3+2);
+							currentLine.append(opcodesSpaces.get(j * 3 + 2));
 						}
 						addedSpaces = true;
 						break;
@@ -970,13 +953,13 @@ public class BIDE {
 				indentLevel--;
 				try {
 					tabs = tabs.substring(1);
-				} catch (StringIndexOutOfBoundsException e) {}
+				} catch (StringIndexOutOfBoundsException ignored) {}
 			}
 			
 			// line feed
 			if (hex.equalsIgnoreCase("D")||hex.equalsIgnoreCase("C")) {
 				
-				currentLine = tabs + currentLine;
+				currentLine.insert(0, tabs);
 				// remove tab if unindenting
 				
 				if (unindentCurrentLineAndIndentNext) {
@@ -984,7 +967,7 @@ public class BIDE {
 				}
 				
 				if (currentIndentLevel < indentLevel) {
-					currentLine = currentLine.substring((indentLevel-currentIndentLevel));
+					currentLine = new StringBuilder(currentLine.substring((indentLevel - currentIndentLevel)));
 				}
 				if (unindentCurrentLineAndIndentNext) {
 					indentLevel++;
@@ -993,13 +976,13 @@ public class BIDE {
 				
 				// Replace "\nThen" by ":Then\n"
 				if (i+3 < content.length() && content.substring(i, i+3).equals(new CasioString(new byte[]{0x0D, (byte)0xF7, 0x01}))) {
-					currentLine += " :Then";
+					currentLine.append(" :Then");
 					i += 2;
 				}
 				
 				lines.add(currentLine + (hex.equalsIgnoreCase("C") ? "◢" : "") + "\n");
 				
-				currentLine = "";
+				currentLine = new StringBuilder();
 				currentIndentLevel = indentLevel;
 				continue;
 			}
@@ -1008,36 +991,36 @@ public class BIDE {
 			if ((hex.equalsIgnoreCase("3D") || hex.equalsIgnoreCase("99")) && i > 0) { // '=' or '-'
 				short c = content.charAt(i-1);
 				if (hex.equalsIgnoreCase("3D") && (c == '!' || c == '>' || c == '<')) { // != >= <=
-					currentLine += "&=;";
+					currentLine.append("&=;");
 					continue;
 				}
 				if (i < content.length()-1) {
 					c = content.charAt(i+1);
 					if (hex.equalsIgnoreCase("99") && i < content.length()-1 && (c == '>' || c == 0x12)) { //-> ->=
-						currentLine += "&-;";
+						currentLine.append("&-;");
 						continue;
 					}
 					if (hex.equalsIgnoreCase("3D") && i < content.length()-1 && (c == '>' || c == 0x12)) { //=> =>=
-						currentLine += "&=;";
+						currentLine.append("&=;");
 						continue;
 					}
 				}
 			}
 
-			for (int j = 0; j < opcodes.size(); j++) {
-				if (hex.equalsIgnoreCase(opcodes.get(j).hex)) {
-					if (opcodes.get(j).unicode == null || BIDE.options.getProperty("allowUnicode").equals("false")) {
-						if (!currentPosIsString || opcodes.get(j).text.length() == 1 || opcodes.get(j).text.startsWith("&")
-								|| "->=><=>=!=".contains(opcodes.get(j).text)) {
-							currentLine += opcodes.get(j).text;
+			for (Opcode opcode : opcodes) {
+				if (hex.equalsIgnoreCase(opcode.hex)) {
+					if (opcode.unicode == null || BIDE.options.getProperty("allowUnicode").equals("false")) {
+						if (!currentPosIsString || opcode.text.length() == 1 || opcode.text.startsWith("&")
+								|| "->=><=>=!=".contains(opcode.text)) {
+							currentLine.append(opcode.text);
 						} else {
-							currentLine += "&#" + opcodes.get(j).hex + ";";
+							currentLine.append("&#").append(opcode.hex).append(";");
 						}
 					} else {
-						if (!currentPosIsString || opcodes.get(j).unicode.length() == 1) {
-							currentLine += opcodes.get(j).unicode;
+						if (!currentPosIsString || opcode.unicode.length() == 1) {
+							currentLine.append(opcode.unicode);
 						} else {
-							currentLine += "&#" + opcodes.get(j).hex + ";";
+							currentLine.append("&#").append(opcode.hex).append(";");
 						}
 					}
 					foundMatch = true;
@@ -1047,12 +1030,12 @@ public class BIDE {
 			
 			if (hex.equals("f702")) {
 				unindentCurrentLineAndIndentNext = true;
-				currentLine += "\n" + tabs;
+				currentLine.append("\n").append(tabs);
 			}
 			
 			if (!foundMatch) {
 				System.out.println("WARNING: Unknown opcode 0x" + hex);
-				currentLine += "&#"+hex+";";
+				currentLine.append("&#").append(hex).append(";");
 			}
 
 			
@@ -1060,12 +1043,12 @@ public class BIDE {
 			if (isMultiByte) i++;
 		}
 		
-		lines.add(currentLine);
+		lines.add(currentLine.toString());
 		
 		
 		StringBuilder strBuilder = new StringBuilder();
-		for (int i = 0; i < lines.size(); i++) {
-		   strBuilder.append(lines.get(i));
+		for (String line : lines) {
+			strBuilder.append(line);
 		}
 		
 		return strBuilder.toString();
@@ -1080,7 +1063,9 @@ public class BIDE {
 		
 		try {
 			String line;
-			BufferedReader br = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/opcodes.txt"), StandardCharsets.UTF_8));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					BIDE.class.getResourceAsStream("/opcodes.txt"), StandardCharsets.UTF_8
+			));
 			while ((line = br.readLine()) != null) {
 				sb.append(line);
 				sb.append("\n");
@@ -1111,12 +1096,12 @@ public class BIDE {
 	
 	public static void clearMacros() {
 		macros.clear();
-		macros = new ArrayList<Macro>(defaultMacros);
+		macros = new ArrayList<>(defaultMacros);
 	}
 	
 	public static void initMacros() {
 		
-		defaultMacros = new ArrayList<Macro>();
+		defaultMacros = new ArrayList<>();
 		
 		defaultMacros.add(new Macro("!=", "!="));
 		defaultMacros.add(new Macro("!", "Not "));
@@ -1198,13 +1183,13 @@ public class BIDE {
 			defaultMacros.add(new Macro((String)keyCodes[i], String.valueOf(keyCodes[i+1])));
 		}
 
-		macros = new ArrayList<Macro>(defaultMacros);
+		macros = new ArrayList<>(defaultMacros);
 	}
 	
 	public static List<Byte> byteArrayToList(byte[] b) {
-		List<Byte> result = new ArrayList<Byte>();
-		for (int i = 0; i < b.length; i++) {
-			result.add(b[i]);
+		List<Byte> result = new ArrayList<>();
+		for (byte value : b) {
+			result.add(value);
 		}
 		return result;
 	}
@@ -1288,7 +1273,7 @@ public class BIDE {
 					}
 				}
 				
-				((ProgScrollPane)BIDE.g1mParts.get(g).comp).textPane.setText(Arrays.stream(lines).collect(Collectors.joining("\n")));
+				((ProgScrollPane)BIDE.g1mParts.get(g).comp).textPane.setText(String.join("\n", lines));
 				
 			}
 		}
@@ -1303,11 +1288,11 @@ public class BIDE {
     	            }
     	            public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType)
     	            {
-    	                //No need to implement.
+    	                // No need to implement.
     	            }
     	            public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType)
     	            {
-    	                //No need to implement.
+    	                // No need to implement.
     	            }
     	        }
     	};
@@ -1340,7 +1325,7 @@ public class BIDE {
 	            
 	        }
 	        in.close();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 	

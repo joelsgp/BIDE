@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 public class IO {
-	public static void writeToFile(File file, List<Byte> content, boolean deleteFile) throws IOException {
+	public static void writeToFile(File file, List<Byte> content, boolean deleteFile) {
 		try {
 			if (deleteFile) {
 				file.delete();

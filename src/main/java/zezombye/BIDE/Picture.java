@@ -159,7 +159,7 @@ public class Picture extends JPanel {
 					if (extension.equals(".png")) {
 						return true;
 					}
-				} catch (Exception e) {}
+				} catch (Exception ignored) {}
 				return false;
 			}
 
@@ -226,7 +226,7 @@ public class Picture extends JPanel {
 			BIDE.error("Size must be between 0x4 and 0x800");
 		} else {
 			this.size = size;
-			pictPanel.pictSize = size > 0x400 ? 0x400 : size;
+			pictPanel.pictSize = Math.min(size, 0x400);
 			pictPanel2.pictSize = size <= 0x400 ? 0 : size-0x400;
 			pictPanel.repaint();
 			pictPanel2.repaint();

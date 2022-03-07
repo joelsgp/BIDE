@@ -1,8 +1,6 @@
 package zezombye.BIDE;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.text.AbstractDocument;

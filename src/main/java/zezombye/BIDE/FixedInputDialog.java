@@ -9,7 +9,7 @@ import javax.swing.JTextField;
 
 public class FixedInputDialog extends JDialog {
 	
-	public String showInputDialog(Window parent, String message, String title, String defaultInputValue) {
+	public void showInputDialog(Window parent, String message, String title, String defaultInputValue) {
 		
 		JDialog dialog = new JDialog(parent, title, Dialog.DEFAULT_MODALITY_TYPE);
 		dialog.setLocationRelativeTo(parent);
@@ -22,7 +22,6 @@ public class FixedInputDialog extends JDialog {
 		dialog.setTitle(title);
 		dialog.pack();
 		dialog.setVisible(true);
-		return "";
 	}
 	
 }
