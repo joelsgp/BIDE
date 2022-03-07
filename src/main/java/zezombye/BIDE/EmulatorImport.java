@@ -15,7 +15,6 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinUser;
-import com.sun.jna.platform.win32.WinUser.WNDENUMPROC;
 import com.sun.jna.win32.StdCallLibrary;
 
 
@@ -47,11 +46,11 @@ public class EmulatorImport {
     
     public EmulatorImport() {
     	try {
-			confirmation = ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/confirmation.png"));
-			complete = ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/complete.png"));
-			memMenu = ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/memMenu.png"));
-			beginBenchmark = ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/beginBenchmark.png"));
-			endBenchmark = ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/endBenchmark.png"));
+			confirmation = ImageIO.read(BIDE.class.getResourceAsStream("/images/confirmation.png"));
+			complete = ImageIO.read(BIDE.class.getResourceAsStream("/images/complete.png"));
+			memMenu = ImageIO.read(BIDE.class.getResourceAsStream("/images/memMenu.png"));
+			beginBenchmark = ImageIO.read(BIDE.class.getResourceAsStream("/images/beginBenchmark.png"));
+			endBenchmark = ImageIO.read(BIDE.class.getResourceAsStream("/images/endBenchmark.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -76,9 +75,12 @@ public class EmulatorImport {
     		inputKey(KeyEvent.VK_ENTER, emuSleep);
     		long timeBenchmark = System.currentTimeMillis();
     		long timeout = System.currentTimeMillis()+10000;
-    		while (!testImgEquality(getEmuScreen(), endBenchmark) && System.currentTimeMillis() < timeout);
+    		while (!testImgEquality(getEmuScreen(), endBenchmark) && System.currentTimeMillis() < timeout) {};
     		long duration = System.currentTimeMillis()-timeBenchmark;
-    		System.out.println("Test "+i+": "+duration+"ms" + (System.currentTimeMillis() > timeout ? " or more (limit reached)" : ""));
+    		System.out.println(
+					"Test " + i + ": " + duration + "ms"
+							+ (System.currentTimeMillis() > timeout ? " or more (limit reached)" : "")
+			);
     		inputKey(KeyEvent.VK_ENTER, emuSleep);
     		try {
 				Thread.sleep(100);
@@ -259,18 +261,7 @@ public class EmulatorImport {
 		        // an offset to get the required VK_NUMPAD key-code
 		        int numpad_kc = key / (int) (Math.pow(10, i)) % 10 + KeyEvent.VK_NUMPAD0;
 
-		        robot.keyPress(numpad_kc);
-		        try {
-					Thread.sleep(sleep);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-		        robot.keyRelease(numpad_kc);
-		        try {
-					Thread.sleep(sleep);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		        inputKey(numpad_kc, sleep);
 		    }
 
 		    robot.keyRelease(KeyEvent.VK_ALT);
@@ -314,30 +305,22 @@ public class EmulatorImport {
 	}
 	
 	public ArrayList<String> enumWindows() {
-		ArrayList<String> titles = new ArrayList<String>();
-		user32.EnumWindows(new WNDENUMPROC() {
-			
-	        public boolean callback(HWND hWnd, Pointer arg1) {
-	            byte[] windowText = new byte[512];
-	            user32.GetWindowTextA(hWnd, windowText, 512);
-	            String wText = Native.toString(windowText);
+		ArrayList<String> titles = new ArrayList<>();
+		user32.EnumWindows((hWnd, arg1) -> {
+			byte[] windowText = new byte[512];
+			user32.GetWindowTextA(hWnd, windowText, 512);
+			String wText = Native.toString(windowText);
 
-	            if (wText.isEmpty()) {
-	                return true;
-	            }
-	            titles.add(wText);
-	            //System.out.println(wText);
-	            //System.out.println("Found window with text " + hWnd + ", total " + ++count + " Text: " + wText);
-	            /*if (wText.startsWith("fx-9860")) {
-	                
-	                return true;
-	            }*/
-	            if (wText.contains("Manager PLUS")) {
-	            	emulatorHWND = hWnd;
-	            }
-	            return true;
-	        }
-	    }, null);
+			if (wText.isEmpty()) {
+				return true;
+			}
+			titles.add(wText);
+
+			if (wText.contains("Manager PLUS")) {
+				emulatorHWND = hWnd;
+			}
+			return true;
+		}, null);
 		return titles;
 	}
 }

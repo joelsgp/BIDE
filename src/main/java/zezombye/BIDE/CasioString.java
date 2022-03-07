@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CasioString {
-	private List<Byte> content = new ArrayList<Byte>();
+	private List<Byte> content = new ArrayList<>();
 	
 	public CasioString() {}
 	
@@ -43,7 +43,7 @@ public class CasioString {
 	public int indexOf(char c) {return indexOf((byte)c);}
 	
 	public CasioString substring(int fromIndex, int toIndex) {
-		return new CasioString(new ArrayList<Byte>(this.content.subList(fromIndex, toIndex)));
+		return new CasioString(new ArrayList<>(this.content.subList(fromIndex, toIndex)));
 	}
 	public CasioString substring(int fromIndex) {return substring(fromIndex, this.length());}
 	
@@ -97,9 +97,9 @@ public class CasioString {
 	public void replace(byte[] target, List<Byte> replacement) {replace(byteArrayToList(target), replacement);}
 	
 	public List<Byte> byteArrayToList(byte[] b) {
-		List<Byte> result = new ArrayList<Byte>();
-		for (int i = 0; i < b.length; i++) {
-			result.add(b[i]);
+		List<Byte> result = new ArrayList<>();
+		for (byte value : b) {
+			result.add(value);
 		}
 		return result;
 	}
@@ -117,7 +117,7 @@ public class CasioString {
 	}
 
 	public void setContent(List<Byte> content) {
-		this.content = new ArrayList<Byte>(content);
+		this.content = new ArrayList<>(content);
 	}
 	
 	@Override

@@ -13,19 +13,17 @@ public class G1MPart {
 	public CasioString binaryContent = null;
 	public boolean isEditedSinceLastSaveToG1M = true;
 	public JComponent comp;
-	public String name = "";
-	public String option = "";
-	public Object content = "";
+	public String name;
+	public String option;
+	public Object content;
 	public int type = 0;
 	
-	//Warning: do not use name, option or content to retrieve informations because they may have changed!
+	//Warning: do not use name, option or content to retrieve information because they may have changed!
 	//For example, if the user modifies the content to modify the name, that change will not be reflected in name (nor in content).
 	public G1MPart(String name, String option, Object content, int type) {
 		this.name = name;
 		this.option = option;
 		this.type = type;
-		//this.setViewportView(textPane);
-		//this.setViewportView(new RSyntaxTextArea());
 		//Check if content is missing headers
 		if (type != BIDE.TYPE_PICT && type != BIDE.TYPE_CAPT && !((String)content).startsWith("#")) {
 			if (type == BIDE.TYPE_PROG) {
@@ -80,8 +78,5 @@ class ProgScrollPane extends RTextScrollPane {
 		super(textPane);
 		this.textPane = textPane;
 		this.type = type;
-		/*if (type == BIDE.TYPE_CAPT || type == BIDE.TYPE_PICT) {
-			this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		}*/
 	}
 }

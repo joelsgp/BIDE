@@ -14,7 +14,7 @@ import java.util.List;
 
 public class G1MWrapper {
 	
-	public List<CasioString> parts = new ArrayList<CasioString>();
+	public List<CasioString> parts = new ArrayList<>();
 	
 	public void addPart(CasioString part, CasioString partName, int type) {
 		
@@ -51,8 +51,8 @@ public class G1MWrapper {
 	public void generateG1M(String destPath) throws IOException {
 		//Header
 		CasioString content = new CasioString();
-		for (int i = 0; i < parts.size(); i++) {
-			content.add(parts.get(i));
+		for (CasioString part : parts) {
+			content.add(part);
 		}
 		CasioString sizeString = new CasioString(new byte[]{0,0,0,0});
 		
@@ -73,7 +73,7 @@ public class G1MWrapper {
 		if (BIDE.runOn.equals("emulator")) {
 			BIDE.autoImport.autoImport(destPath);
 		} else if (BIDE.runOn.equals("calculator")){
-			//TODO
+			// TODO
 		}
 	}
 	
@@ -94,34 +94,35 @@ public class G1MWrapper {
 	//Not really necessary to use CasioStrings here
 	//Only special bytes are 0 and 1
 	public CasioString getSubHeaderIDAndDir(int partType, String partName) {
-		String partTypeStr = "";
-		String partDir = "";
+		StringBuilder partTypeStr = new StringBuilder();
+		StringBuilder partDir = new StringBuilder();
 		switch (partType) {
-			case BIDE.TYPE_PROG:
-				partTypeStr = "PROGRAM";
-				partDir = "system";
-				break;
-			case BIDE.TYPE_PICT:
-				partTypeStr = "PICTURE "+partName.substring(4);
-				partDir = "main";
-				break;
-			case BIDE.TYPE_CAPT:
-				partTypeStr = "CAPT "+partName.substring(4);
-				partDir = "@REV2";
-				break;
-			default:
+			case BIDE.TYPE_PROG -> {
+				partTypeStr = new StringBuilder("PROGRAM");
+				partDir = new StringBuilder("system");
+			}
+			case BIDE.TYPE_PICT -> {
+				partTypeStr = new StringBuilder("PICTURE " + partName.substring(4));
+				partDir = new StringBuilder("main");
+			}
+			case BIDE.TYPE_CAPT -> {
+				partTypeStr = new StringBuilder("CAPT " + partName.substring(4));
+				partDir = new StringBuilder("@REV2");
+			}
+			default -> {
 				BIDE.error("Unknown part ID " + partType);
 				return null;
+			}
 		}
 		
 		//padding
 		int idlen = partTypeStr.length();
 		for (int i = 0; i < 16-idlen; i++) {
-			partTypeStr += (char)0;
+			partTypeStr.append((char) 0);
 		}
 		int dirlen = partDir.length();
 		for (int i = 0; i < 8-dirlen; i++) {
-			partDir += (char)0;
+			partDir.append((char) 0);
 		}
 		
 		return new CasioString(partTypeStr + new String(new char[]{0,0,0,1}) + partDir);

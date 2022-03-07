@@ -11,9 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -72,7 +69,7 @@ public class CharPicker extends JPanel {
 		
 		try {
 			for (int i = 0; i < nbCats; i++) {
-				cats[i] = ImageIO.read(BIDE.class.getClass().getResourceAsStream("/images/charPicker/cat"+(i+1)+".png"));
+				cats[i] = ImageIO.read(BIDE.class.getResourceAsStream("/images/charPicker/cat"+(i+1)+".png"));
 				jtp.addTab(catTitles[i], new CharPanel(cats[i], i));
 			}
 		} catch (IOException e) {
@@ -161,16 +158,7 @@ class CharPanel extends JPanel {
 						ProgramTextPane comp = ((ProgramTextPane)((ProgScrollPane)BIDE.ui.jtp.getSelectedComponent()).getViewport().getView());
 						comp.insert(insert, comp.getCaretPosition());
 					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					
-				} catch (NullPointerException e) {
-					
-				} catch (ClassCastException e) {
-					
-				}
-				//find opcode with that hex
-				
-				
+				} catch (ArrayIndexOutOfBoundsException | NullPointerException | ClassCastException ignored) {}
 			}
 
 			@Override
@@ -193,8 +181,7 @@ class CharPanel extends JPanel {
     				g2d.setColor(Color.RED);
     				g2d.drawRect(gridX*18, gridY*24, 18, 24);
     			}
-    		} catch (ArrayIndexOutOfBoundsException e) {}
-	            
+    		} catch (ArrayIndexOutOfBoundsException ignored) {}
         }
         
         g2d.dispose();

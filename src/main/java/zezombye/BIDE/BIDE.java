@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -37,10 +38,10 @@ import com.google.gson.reflect.TypeToken;
 
 public class BIDE {
 	
-	public static List<Opcode> opcodes = new ArrayList<Opcode>();
-	public static List<Macro> macros = new ArrayList<Macro>();
-	public static List<Macro> defaultMacros = new ArrayList<Macro>();
-	public static List<G1MPart> g1mParts = new ArrayList<G1MPart>();
+	public static List<Opcode> opcodes = new ArrayList<>();
+	public static List<Macro> macros = new ArrayList<>();
+	public static List<Macro> defaultMacros = new ArrayList<>();
+	public static List<G1MPart> g1mParts = new ArrayList<>();
 	
 	public static String pathToG1M = System.getProperty("user.home")+"/desktop/";
 	public static String pathToSavedG1M = "";
@@ -59,15 +60,7 @@ public class BIDE {
 	public final static int TYPE_COLORATION = 6;
 	public final static int TYPE_CHARLIST = 7;
 	public static boolean debug = false;
-	//public static Font progFont = new Font("DejaVu Sans Mono", Font.PLAIN, 12);
 	public static Font progFont, dispFont;
-	//public static Font dispFont = new Font("DejaVu Sans Mono", Font.PLAIN, 13);
-	 
-	public final static String pictTutorial = """
-				'To edit the picture, use the characters ' , :
-				'which make ▀ ▄ █ respectively.
-				'Make sure not to edit the border!
-			""";
 
 	public final static String pictWarning = 
 			"\n'\n'DO NOT EDIT THE PICTURE BELOW, unless you are an advanced user!\n'\n";
@@ -90,15 +83,17 @@ public class BIDE {
 		}
 				
 		options.loadProperties();
-		
-		//options.initProperties();
+
 		getOpcodes();
 		initMacros();
-		
-		//System.out.println(BIDE.class.getClass().getResource("/").toString());
 
 		System.out.println("args : "+Arrays.toString(args));
-		if (args.length > 0 && (args[0].equals("--to-g1m") || args[0].equals("--to-txt") || args[0].equals("--help") || args[0].equals("-help"))) {
+		if (
+				args.length > 0 && (args[0].equals("--to-g1m")
+						|| args[0].equals("--to-txt")
+						|| args[0].equals("--help")
+						|| args[0].equals("-help"))
+		) {
 			//CLI
 			isCLI = true;
 			switch (args[0]) {
@@ -115,7 +110,7 @@ public class BIDE {
 							G1MParser g1mparser = new G1MParser(args[i]);
 							g1mparser.readG1M();
 
-							if (!g1mparser.checkValidity()) {
+							if (!g1mparser.isValid()) {
 								BIDE.readFromTxt(args[i]);
 							} else {
 								BIDE.readFromG1M(args[i]);
@@ -137,7 +132,7 @@ public class BIDE {
 							G1MParser g1mparser = new G1MParser(args[i]);
 							g1mparser.readG1M();
 
-							if (!g1mparser.checkValidity()) {
+							if (!g1mparser.isValid()) {
 								BIDE.readFromTxt(args[i]);
 							} else {
 								BIDE.readFromG1M(args[i]);
@@ -156,15 +151,22 @@ public class BIDE {
 		} else {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			try {
-				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, BIDE.class.getClass().getResourceAsStream("/Casio Graph.ttf")));
-				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, BIDE.class.getClass().getResourceAsStream("/DejaVuAvecCasio.ttf")));
-			} catch (FontFormatException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+				ge.registerFont(Font.createFont(
+						Font.TRUETYPE_FONT,
+						BIDE.class.getResourceAsStream("/Casio Graph.ttf"))
+				);
+				ge.registerFont(Font.createFont(
+						Font.TRUETYPE_FONT,
+						BIDE.class.getResourceAsStream("/DejaVuAvecCasio.ttf"))
+				);
+			} catch (FontFormatException | IOException e) {
 				e.printStackTrace();
 			}
-			
-			progFont = new Font(options.getProperty("progFontName"), Font.TRUETYPE_FONT, Integer.parseInt(options.getProperty("progFontSize")));
+
+			progFont = new Font(
+					options.getProperty("progFontName"),
+					Font.PLAIN, Integer.parseInt(options.getProperty("progFontSize"))
+			);
 			dispFont = progFont;
 			if (options.getProperty("runOn").equals("emulator")) {
 				autoImport = new EmulatorImport();
@@ -174,17 +176,9 @@ public class BIDE {
 					ui.createAndDisplayUI();
 					
 					ProgramTextPane.initAutoComplete();
-					
-					//ui.jtp.addTab("test", new Program("test1", "800", "testcontent", TYPE_PICT).comp);
-					
-					//ui.createNewTab(TYPE_COLORATION);
-					//ui.createNewTab(TYPE_PICT);
-					//ui.jtp.addTab("testPict", new Picture(BIDE.TYPE_PICT, "PICT10", 0x400, new Byte[] {(byte)0b10001011, 0b00100101, 0b01001010, 0b00010011}).jsp);
-					//((ProgScrollPane)ui.jtp.getComponentAt(0)).textPane.setText("testcontent");
-					
-					//new AutoImport().autoImport("C:\\Users\\Catherine\\Desktop\\PUISS4.g1m");
+
 					System.out.println("Finished initialization");
-					if (!debug) checkForNewVersion();
+					if (!debug) {checkForNewVersion();}
 					
 					//Open eventual files provided as arguments
 					
@@ -203,7 +197,7 @@ public class BIDE {
 	
 	public static void readFromTxt(String txtPath) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(txtPath));
-		String fileContent = new String(encoded, "UTF-8");
+		String fileContent = new String(encoded, StandardCharsets.UTF_8);
 		fileContent = fileContent.replaceAll("\r\n", "\n");
 		String[] progsTxt = fileContent.split("\\n#End of part\\n");
 		for (int i = 0; i < progsTxt.length; i++) {
@@ -226,10 +220,10 @@ public class BIDE {
 			//Get 2nd line, which is option
 			String option = "";
 			try {
-				//System.out.println(progsTxt[i].indexOf('\n'));
-				//System.out.println(progsTxt[i].substring(progsTxt[i].indexOf('\n')+1).indexOf('\n'));
-				option = progsTxt[i].substring(progsTxt[i].indexOf('\n')+1, progsTxt[i].indexOf('\n')+1 + progsTxt[i].substring(progsTxt[i].indexOf('\n')+1).indexOf('\n'));
-				//System.out.println("option = " + option);
+				option = progsTxt[i].substring(
+						progsTxt[i].indexOf('\n')+1,
+						progsTxt[i].indexOf('\n')+1 + progsTxt[i].substring(progsTxt[i].indexOf('\n')+1).indexOf('\n')
+				);
 			} catch (Exception e) {
 				error("Invalid option in part "+name);
 				e.printStackTrace();
@@ -246,23 +240,19 @@ public class BIDE {
 					}
 					content = progsTxt[i];
 				}
-			} else {
-				if (type == BIDE.TYPE_PICT) {
-					if (option.startsWith("#Size: 0x")) {
-						option = option.substring(9);
-						try {
-							Integer.parseInt(option, 16);
-						} catch (NumberFormatException e) {
-							error(name, "Invalid picture size!");
-						}
-					} else {
-						error(name, "Picture size undefined!");
+			} else if (type == BIDE.TYPE_PICT) {
+				if (option.startsWith("#Size: 0x")) {
+					option = option.substring(9);
+					try {
+						Integer.parseInt(option, 16);
+					} catch (NumberFormatException e) {
+						error(name, "Invalid picture size!");
 					}
-				} else if (type == BIDE.TYPE_CAPT) {
-					option = "400";
+				} else {
+					error(name, "Picture size undefined!");
 				}
-				
-				content = asciiToPict(progsTxt[i], name, 0, option).getContent().toArray(new Byte[0]);
+			} else {
+				option = "400";
 			}
 				
 			g1mParts.add(new G1MPart(name, option, content, type));
@@ -274,7 +264,7 @@ public class BIDE {
 		System.out.println("Reading from g1m at " + g1mpath);
 		G1MParser g1mparser = new G1MParser(g1mpath);
 		g1mparser.readG1M();
-		if (!g1mparser.checkValidity()) {
+		if (!g1mparser.isValid()) {
 			error("Invalid g1m!");
 			return;
 		}
@@ -680,7 +670,7 @@ public class BIDE {
 		
 		//Convert ascii binary to bytes
 		for (int i = 0; i < Integer.parseInt(pictSize, 16); i++) {
-			bytes.add(new Byte((byte)Integer.parseInt(binary.substring(8*i, 8*i+8), 2)));
+			bytes.add((byte) Integer.parseInt(binary.substring(8 * i, 8 * i + 8), 2));
 		}
 		
 		return new CasioString(bytes);

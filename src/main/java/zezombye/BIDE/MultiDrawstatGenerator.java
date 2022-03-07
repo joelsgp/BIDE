@@ -24,41 +24,33 @@ public class MultiDrawstatGenerator extends JFrame {
 		this.setTitle("Multi Drawstat Generator");
 		this.setSize(128*6+20, 64*6+120);
 		this.setLocationRelativeTo(null);
-		//multiDrawstat.setAlwaysOnTop(true);
 		this.setResizable(false);
 		this.setLayout(new FlowLayout());
 		DrawstatPanel dp = new DrawstatPanel(this);
 		JButton reset = new JButton("Clear all");
 		this.add(new JLabel("Warning: you HAVE to use ViewWindow 1,127,0,63,1,0,0,1,1!"));
-		reset.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				dp.clearScreen();
-				dp.repaint();
-			}
+		reset.addActionListener(arg0 -> {
+			dp.clearScreen();
+			dp.repaint();
 		});
 		this.add(reset);
 		JButton undo = new JButton("Undo");
-		undo.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				if (dp.lines.size() > 0) {
-					dp.lines.remove(dp.lines.size()-1);
-					dp.repaint();
-				}
-			}
-   		});
-		this.add(undo);
-		JButton showGridButton = new JButton("Hide grid");
-		showGridButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				showGrid = !showGrid;
-				if (showGrid) {
-					showGridButton.setText("Hide grid");
-				} else {
-					showGridButton.setText("Show grid");
-				}
+		undo.addActionListener(e -> {
+			if (dp.lines.size() > 0) {
+				dp.lines.remove(dp.lines.size()-1);
 				dp.repaint();
 			}
+		});
+		this.add(undo);
+		JButton showGridButton = new JButton("Hide grid");
+		showGridButton.addActionListener(arg0 -> {
+			showGrid = !showGrid;
+			if (showGrid) {
+				showGridButton.setText("Hide grid");
+			} else {
+				showGridButton.setText("Show grid");
+			}
+			dp.repaint();
 		});
 		this.add(showGridButton);
 		
@@ -80,25 +72,22 @@ public class MultiDrawstatGenerator extends JFrame {
 		radioButtonPanel.add(sketchDotButton);
 		radioButtonPanel.add(sketchThickButton);
 		radioButtonPanel.add(sketchBrokenButton);
-		ActionListener al = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals("")) {
-					dp.dottedLine = false;
-					dp.thickLine = false;
-				} else if (e.getActionCommand().equals("SketchDot ")) {
-					dp.dottedLine = true;
-					dp.thickLine = false;
-				} else if (e.getActionCommand().equals("SketchThick ")) {
-					dp.dottedLine = false;
-					dp.thickLine = true;
-				} else if (e.getActionCommand().equals("SketchBroken ")) {
-					dp.dottedLine = true;
-					dp.thickLine = true;
-				}
-				modifier = e.getActionCommand();
-				dp.repaint();
+		ActionListener al = e -> {
+			if (e.getActionCommand().equals("")) {
+				dp.dottedLine = false;
+				dp.thickLine = false;
+			} else if (e.getActionCommand().equals("SketchDot ")) {
+				dp.dottedLine = true;
+				dp.thickLine = false;
+			} else if (e.getActionCommand().equals("SketchThick ")) {
+				dp.dottedLine = false;
+				dp.thickLine = true;
+			} else if (e.getActionCommand().equals("SketchBroken ")) {
+				dp.dottedLine = true;
+				dp.thickLine = true;
 			}
+			modifier = e.getActionCommand();
+			dp.repaint();
 		};
 		normalButton.addActionListener(al);
 		sketchDotButton.addActionListener(al);
@@ -107,34 +96,27 @@ public class MultiDrawstatGenerator extends JFrame {
 		this.add(radioButtonPanel);
 		this.add(dp, BorderLayout.CENTER);
 		JButton copyButton = new JButton("Copy");
-		copyButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				StringSelection stringSelection = new StringSelection(dp.result.getText());
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents(stringSelection, null);
-			}
+		copyButton.addActionListener(arg0 -> {
+			StringSelection stringSelection = new StringSelection(dp.result.getText());
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			clipboard.setContents(stringSelection, null);
 		});
 		this.add(info, BorderLayout.SOUTH);
 		this.add(copyButton, BorderLayout.SOUTH);
 		this.add(dp.result, BorderLayout.SOUTH);
 		
-		this.addMouseWheelListener(new MouseWheelListener() {
-			@Override public void mouseWheelMoved(MouseWheelEvent e) {
-				//e.obey();
-				//e.conform();
-				e.consume();
-			    if (e.isControlDown()) {
-			        if (e.getWheelRotation() < 0 && dp.zoom < 14) {            
-			            dp.setZoom(dp.zoom + 1);
-			        } else if (dp.zoom > 2){
-			            dp.setZoom(dp.zoom - 1);             
-			        }
-			        dp.repaint();
-			        repaint();
-			    }
-			    
+		this.addMouseWheelListener(e -> {
+			e.consume();
+			if (e.isControlDown()) {
+				if (e.getWheelRotation() < 0 && dp.zoom < 14) {
+					dp.setZoom(dp.zoom + 1);
+				} else if (dp.zoom > 2){
+					dp.setZoom(dp.zoom - 1);
+				}
+				dp.repaint();
+				repaint();
 			}
+
 		});
 		
 		this.setVisible(true);

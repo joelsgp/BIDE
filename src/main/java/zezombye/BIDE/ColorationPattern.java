@@ -14,22 +14,22 @@ public class ColorationPattern {
 	}
 	
 	public ColorationPattern(String[] words, boolean needWordBoundaries, Color color, boolean isBold) {
-		String regex = "";
+		StringBuilder regex = new StringBuilder();
 		for (int i = 0; i < words.length; i++) {
 			if (needWordBoundaries) 
-				regex += "(?<=\\W)";
+				regex.append("(?<=\\W)");
 			else 
-				regex += "\\Q";
-			regex += words[i];
+				regex.append("\\Q");
+			regex.append(words[i]);
 			if (needWordBoundaries)
-				regex += "(?=\\W)";
+				regex.append("(?=\\W)");
 			else
-				regex += "\\E";
+				regex.append("\\E");
 			if (i < words.length - 1) {
-				regex += "|";
+				regex.append("|");
 			}
 		}
-		this.pattern = Pattern.compile(regex);
+		this.pattern = Pattern.compile(regex.toString());
 		this.color = color;
 		this.isBold = isBold;
 	}

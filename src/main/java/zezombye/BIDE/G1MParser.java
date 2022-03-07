@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ public class G1MParser {
 	
 	String path;
 	CasioString fileContent;
-	List<CasioString> parts = new ArrayList<CasioString>();
+	List<CasioString> parts = new ArrayList<>();
 	
 	public G1MParser(String path) {
 		this.path = path;
@@ -19,7 +20,7 @@ public class G1MParser {
 		this.fileContent = IO.readFromFile(path);
 	}
 	
-	public boolean checkValidity() {
+	public boolean isValid() {
 		return fileContent.substring(0, 8).equals(new CasioString(new byte[]{(byte)0xAA, (byte)0xAC, (byte)0xBD, (byte)0xAF, (byte)0x90, (byte)0x88, (byte)0x9A, (byte)0x8D}));
 	}
 	
@@ -52,13 +53,9 @@ public class G1MParser {
 			for (int i = 0; i < 4; i++) {
 				partSize += ((fileContent.charAt(fileIndex+37+i)&0xFF)<<(8*(3-i)));
 			}
-			//CasioString currentPart = fileContent.substring(fileIndex);
-			//System.out.println("Parsing current part "+getPartName(currentPart)+", type "+getPartType(currentPart));
-			//fileContent.charAt(fileIndex+37)*16777216 + fileContent.charAt(fileIndex+38)*65536 + fileContent.charAt(fileIndex+39)*256 + fileContent.charAt(fileIndex+40) + 44;
 			parts.add(fileContent.substring(fileIndex, fileIndex+partSize));
 			fileIndex += partSize;
 		}
-		//System.out.println(parts);
 	}
 	
 	public CasioString getPartContent(CasioString part) {

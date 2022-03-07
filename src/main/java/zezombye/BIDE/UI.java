@@ -592,7 +592,7 @@ public class UI {
 				    	G1MParser g1mparser = new G1MParser(BIDE.pathToG1M);
 						g1mparser.readG1M();
 						
-						if (!g1mparser.checkValidity()) {
+						if (!g1mparser.isValid()) {
 							BIDE.readFromTxt(BIDE.pathToG1M);
 				    	} else {
 				    		BIDE.readFromG1M(BIDE.pathToG1M);
