@@ -18,8 +18,7 @@ import java.util.Comparator;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.basic.BasicButtonUI;
-
-import com.sun.java.swing.plaf.windows.WindowsTabbedPaneUI;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import javax.swing.*;
 
@@ -69,7 +68,7 @@ public class UI {
 			}
 		};
 		
-		WindowsTabbedPaneUI btpui = new WindowsTabbedPaneUI();
+		BasicTabbedPaneUI btpui = new BasicTabbedPaneUI();
 		jtp.setUI(btpui);
 		
 		
@@ -449,8 +448,8 @@ public class UI {
 			}
 			if (name.endsWith("null")) return;
 			
-			BIDE.g1mparts.add(new G1MPart(name, size, new Byte[0], type));
-			jtp.addTab(name, BIDE.g1mparts.get(BIDE.g1mparts.size()-1).comp);
+			BIDE.g1mParts.add(new G1MPart(name, size, new Byte[0], type));
+			jtp.addTab(name, BIDE.g1mParts.get(BIDE.g1mParts.size()-1).comp);
 			
 		} else {
 			String content = "";
@@ -547,8 +546,8 @@ public class UI {
 			if (name == null || name.endsWith("null")) {
 				return;
 			}
-			BIDE.g1mparts.add(new G1MPart(name, option, content, type));
-			jtp.addTab(name, BIDE.g1mparts.get(BIDE.g1mparts.size()-1).comp);
+			BIDE.g1mParts.add(new G1MPart(name, option, content, type));
+			jtp.addTab(name, BIDE.g1mParts.get(BIDE.g1mParts.size()-1).comp);
 		}
 		
 		
@@ -583,7 +582,7 @@ public class UI {
 		new Thread(new Runnable() {
 			public void run() {
 				if (!addToCurrentFile) {
-					BIDE.g1mparts = new ArrayList<G1MPart>();
+					BIDE.g1mParts = new ArrayList<G1MPart>();
 				}
 				for (int i = 0; i < input.length; i++) {
 		    		BIDE.pathToG1M = input[i].getPath();
@@ -603,7 +602,7 @@ public class UI {
 			    			BIDE.pathToSavedG1M = BIDE.pathToG1M;
 			    		}
 						
-				    	BIDE.g1mparts.sort(new Comparator<G1MPart>() {
+				    	BIDE.g1mParts.sort(new Comparator<G1MPart>() {
 
 							@Override
 							public int compare(G1MPart arg0, G1MPart arg1) {
@@ -634,7 +633,7 @@ public class UI {
 				    } catch (IOException e) {
 						e.printStackTrace();
 					}
-				    if (BIDE.g1mparts.size() != 0) {
+				    if (BIDE.g1mParts.size() != 0) {
 					    System.out.println("Finished loading g1m");
 				    }
 		    	}
@@ -643,8 +642,8 @@ public class UI {
 				new SwingWorker<Void, G1MPart>() {
 		        	@Override
 		            protected Void doInBackground() {
-		        		for (int i = 0; i < BIDE.g1mparts.size(); i++) {
-		        			jtp.addTab(BIDE.g1mparts.get(i).name, BIDE.g1mparts.get(i).comp);
+		        		for (int i = 0; i < BIDE.g1mParts.size(); i++) {
+		        			jtp.addTab(BIDE.g1mParts.get(i).name, BIDE.g1mParts.get(i).comp);
 		        		}
 		        		try {
 		    		    	getTextPane().setCaretPosition(0);
@@ -715,7 +714,7 @@ public class UI {
 								
 					//Update names
 					for (int i = 0; i < jtp.getTabCount(); i++) {
-						jtp.setTitleAt(i, BIDE.g1mparts.get(i).name);
+						jtp.setTitleAt(i, BIDE.g1mParts.get(i).name);
 					}
 				} catch (NullPointerException e) {
 					if (BIDE.debug) e.printStackTrace();
@@ -796,8 +795,8 @@ public class UI {
 					}
 					
 					String imgName = input.getName().substring(0, input.getName().lastIndexOf('.'));
-					BIDE.g1mparts.add(new G1MPart(imgName, Integer.toHexString(size), binary, BIDE.TYPE_PICT));
-					jtp.addTab(imgName, BIDE.g1mparts.get(BIDE.g1mparts.size()-1).comp);
+					BIDE.g1mParts.add(new G1MPart(imgName, Integer.toHexString(size), binary, BIDE.TYPE_PICT));
+					jtp.addTab(imgName, BIDE.g1mParts.get(BIDE.g1mParts.size()-1).comp);
 					selectLastTab();
 				} else {
 					
@@ -840,7 +839,7 @@ public class UI {
 		int option = JOptionPane.showConfirmDialog(BIDE.ui.window, "Are you sure you want to close this tab?", "BIDE", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
         	jtp.remove(i);
-        	BIDE.g1mparts.remove(i);
+        	BIDE.g1mParts.remove(i);
         }
 	}
 	

@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -39,7 +40,7 @@ public class BIDE {
 	public static List<Opcode> opcodes = new ArrayList<Opcode>();
 	public static List<Macro> macros = new ArrayList<Macro>();
 	public static List<Macro> defaultMacros = new ArrayList<Macro>();
-	public static List<G1MPart> g1mparts = new ArrayList<G1MPart>();
+	public static List<G1MPart> g1mParts = new ArrayList<G1MPart>();
 	
 	public static String pathToG1M = System.getProperty("user.home")+"/desktop/";
 	public static String pathToSavedG1M = "";
@@ -62,10 +63,12 @@ public class BIDE {
 	public static Font progFont, dispFont;
 	//public static Font dispFont = new Font("DejaVu Sans Mono", Font.PLAIN, 13);
 	 
-	public final static String pictTutorial = 
-			"\n'To edit the picture, use the characters ' , :\n"
-			+ "'which make ▀ ▄ █ respectively.\n"
-			+ "'Make sure not to edit the border!\n";
+	public final static String pictTutorial = """
+				'To edit the picture, use the characters ' , :
+				'which make ▀ ▄ █ respectively.
+				'Make sure not to edit the border!
+			""";
+
 	public final static String pictWarning = 
 			"\n'\n'DO NOT EDIT THE PICTURE BELOW, unless you are an advanced user!\n'\n";
 	
@@ -98,53 +101,53 @@ public class BIDE {
 		if (args.length > 0 && (args[0].equals("--to-g1m") || args[0].equals("--to-txt") || args[0].equals("--help") || args[0].equals("-help"))) {
 			//CLI
 			isCLI = true;
-			if (args[0].equals("--help") || args[0].equals("-help")) {
-				
-				System.out.println("Syntax:\n"
-						+ "--to-g1m <target> <file1> (<file2> <...>) : creates a g1m file out of the contents of the provided file(s)\n"
-						+ "--to-txt <target> <file1> (<file2> <...>) : creates a txt file out of the contents of the provided file(s)\n"
-						//+ "--run-on-emulator <file> : runs the provided file on the Manager PLUS emulator\n"
-						//+ "--run-on-calculator <file> : runs the provided file on the calculator (requires the BIDE Add-in)\n"
-						+ "<file1> (<file2> <...>) : opens the provided file(s) in GUI");
-				
-			} else if (args[0].equals("--to-g1m")) {
-				String pathToG1M = args[1];
-				for (int i = 2; i < args.length; i++) {
+			switch (args[0]) {
+				case "--help", "-help" -> System.out.println("""
+					Syntax:
+					--to-g1m <target> <file1> (<file2> <...>) : creates a g1m file out of the contents of the provided file(s)
+					--to-txt <target> <file1> (<file2> <...>) : creates a txt file out of the contents of the provided file(s)
+					<file1> (<file2> <...>) : opens the provided file(s) in GUI"""
+				);
+				case "--to-g1m" -> {
+					String pathToG1M = args[1];
+					for (int i = 2; i < args.length; i++) {
+						try {
+							G1MParser g1mparser = new G1MParser(args[i]);
+							g1mparser.readG1M();
+
+							if (!g1mparser.checkValidity()) {
+								BIDE.readFromTxt(args[i]);
+							} else {
+								BIDE.readFromG1M(args[i]);
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 					try {
-						G1MParser g1mparser = new G1MParser(args[i]);
-						g1mparser.readG1M();
-						
-						if (!g1mparser.checkValidity()) {
-							BIDE.readFromTxt(args[i]);
-				    	} else {
-				    		BIDE.readFromG1M(args[i]);
-				    	}
+						writeToG1M(pathToG1M);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
-				try {
-					writeToG1M(pathToG1M);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else if (args[0].equals("--to-txt")) {
-				String pathToDest = args[1];
-				try {
-					for (int i = 2; i < args.length; i++) {
-						G1MParser g1mparser = new G1MParser(args[i]);
-						g1mparser.readG1M();
-						
-						if (!g1mparser.checkValidity()) {
-							BIDE.readFromTxt(args[i]);
-				    	} else {
-				    		BIDE.readFromG1M(args[i]);
-				    	}
+				case "--to-txt" -> {
+					String pathToDest = args[1];
+					try {
+						for (int i = 2; i < args.length; i++) {
+							G1MParser g1mparser = new G1MParser(args[i]);
+							g1mparser.readG1M();
+
+							if (!g1mparser.checkValidity()) {
+								BIDE.readFromTxt(args[i]);
+							} else {
+								BIDE.readFromG1M(args[i]);
+							}
+						}
+
+						writeToTxt(pathToDest);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					
-					writeToTxt(pathToDest);
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
 			}
 
@@ -262,7 +265,7 @@ public class BIDE {
 				content = asciiToPict(progsTxt[i], name, 0, option).getContent().toArray(new Byte[0]);
 			}
 				
-			g1mparts.add(new G1MPart(name, option, content, type));
+			g1mParts.add(new G1MPart(name, option, content, type));
 		}
 		
 	}
@@ -304,7 +307,7 @@ public class BIDE {
 					return;
 				}
 				
-				g1mparts.add(new G1MPart(progName, progPw, progContent, TYPE_PROG));
+				g1mParts.add(new G1MPart(progName, progPw, progContent, TYPE_PROG));
 			} else if (g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_PICT || g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_CAPT) {
 				String name = casioToAscii(g1mparser.getPartName(g1mparser.parts.get(h)), false);
 				
@@ -321,9 +324,9 @@ public class BIDE {
 				Byte[] result = content.getContent().toArray(new Byte[0]);
 				//System.out.println("byte content : "+Arrays.toString(result));
 				if (g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_PICT) {
-					g1mparts.add(new G1MPart(name, Integer.toHexString(content.length()), result, TYPE_PICT));
+					g1mParts.add(new G1MPart(name, Integer.toHexString(content.length()), result, TYPE_PICT));
 				} else {
-					g1mparts.add(new G1MPart(name, "400", result, TYPE_CAPT));
+					g1mParts.add(new G1MPart(name, "400", result, TYPE_CAPT));
 				}
 			}
 		}
@@ -345,17 +348,17 @@ public class BIDE {
 		clearMacros();
 		
 		//ArrayList<Macro> macros = new ArrayList<Macro>();
-		for (int h = 0; h < g1mparts.size(); h++) {
-			int type = g1mparts.get(h).type;
+		for (int h = 0; h < g1mParts.size(); h++) {
+			int type = g1mParts.get(h).type;
 			if (type != TYPE_PICT && type != TYPE_CAPT && type != TYPE_PROG) {
 				continue;
 			}
 			
-			currentPart = g1mparts.get(h);
+			currentPart = g1mParts.get(h);
 			//currentPart.content = "";
 			if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
 				
-				Picture pict = ((Picture)((JScrollPane)(g1mparts.get(h).comp)).getViewport().getView());
+				Picture pict = ((Picture)((JScrollPane)(g1mParts.get(h).comp)).getViewport().getView());
 				
 				currentPart.name = pict.namejtf.getText();
 				currentPart.content = Stream.concat(Arrays.stream(pict.pictPanel.pixels), Arrays.stream(pict.pictPanel2.pixels)).toArray(Byte[]::new);
@@ -373,9 +376,9 @@ public class BIDE {
 			} else {
 				String[] lines;
 				if (!isCLI) {
-					lines = ((ProgramTextPane)((ProgScrollPane)g1mparts.get(h).comp).getViewport().getView()).getText().split("\\n|\\r|\\r\\n");
+					lines = ((ProgramTextPane)((ProgScrollPane) g1mParts.get(h).comp).getViewport().getView()).getText().split("\\n|\\r|\\r\\n");
 				} else {
-					lines = ((String)g1mparts.get(h).content).split("\\n|\\r|\\r\\n");
+					lines = ((String) g1mParts.get(h).content).split("\\n|\\r|\\r\\n");
 				}
 				currentPart.content = "";
 				currentPart.name = lines[0].substring(15);
@@ -444,7 +447,7 @@ public class BIDE {
 					currentPart.content += lines[i] + "\n";
 				}
 			}
-			g1mparts.set(h, currentPart);
+			g1mParts.set(h, currentPart);
 			
 		}
 		Collections.sort(macros, new Comparator<Macro>() {
@@ -453,7 +456,7 @@ public class BIDE {
 				return o2.text.compareTo(o1.text);
 			}
 		});
-		if (g1mparts.size() == 0) {
+		if (g1mParts.size() == 0) {
 			error("No programs detected!");
 			return;
 		}
@@ -462,17 +465,17 @@ public class BIDE {
 		}
 		//Add each part (program) of the ascii file
 		byte[] padding = {0,0,0,0,0,0,0,0};
-		for (int i = 0; i < g1mparts.size(); i++) {
+		for (int i = 0; i < g1mParts.size(); i++) {
 			
-			CasioString name = new CasioString(asciiToCasio(g1mparts.get(i).name, true, g1mparts.get(i).name+".name", 1, macros));
+			CasioString name = new CasioString(asciiToCasio(g1mParts.get(i).name, true, g1mParts.get(i).name+".name", 1, macros));
 			CasioString part = new CasioString("");
 			
-			if (!g1mparts.get(i).isEditedSinceLastSaveToG1M && g1mparts.get(i).type == BIDE.TYPE_PROG) {
-				System.out.println("Already parsed "+g1mparts.get(i).name);
-				part.add(g1mparts.get(i).binaryContent);
+			if (!g1mParts.get(i).isEditedSinceLastSaveToG1M && g1mParts.get(i).type == BIDE.TYPE_PROG) {
+				System.out.println("Already parsed "+ g1mParts.get(i).name);
+				part.add(g1mParts.get(i).binaryContent);
 			} else {
 			
-				System.out.println("Parsing \""+g1mparts.get(i).name+"\"");
+				System.out.println("Parsing \""+ g1mParts.get(i).name+"\"");
 				
 				boolean isBaseProgram = false;
 				if (name.endsWith(new CasioString(new byte[]{(byte)0xE5, (byte)0xB5}))) {
@@ -481,36 +484,36 @@ public class BIDE {
 				}
 				
 				if (name.length() > 8 && !(name.length() == 10 && name.charAt(8) == 0xE5 && name.charAt(9) == 0xB5)) {
-					error("Program \""+g1mparts.get(i).name+"\" has a name too long (8 characters max)!");
+					error("Program \""+ g1mParts.get(i).name+"\" has a name too long (8 characters max)!");
 					return;
 				}
 							
-				if (g1mparts.get(i).type == BIDE.TYPE_CAPT && !g1mparts.get(i).name.startsWith("CAPT")) {
-					error("Capture \""+g1mparts.get(i).name+"\"'s name should start with \"CAPT\"!");
+				if (g1mParts.get(i).type == BIDE.TYPE_CAPT && !g1mParts.get(i).name.startsWith("CAPT")) {
+					error("Capture \""+ g1mParts.get(i).name+"\"'s name should start with \"CAPT\"!");
 					return;
-				} else if (g1mparts.get(i).type == BIDE.TYPE_PICT && !g1mparts.get(i).name.startsWith("PICT")) {
-					error("Picture \""+g1mparts.get(i).name+"\"'s name should start with \"PICT\"!");
+				} else if (g1mParts.get(i).type == BIDE.TYPE_PICT && !g1mParts.get(i).name.startsWith("PICT")) {
+					error("Picture \""+ g1mParts.get(i).name+"\"'s name should start with \"PICT\"!");
 					return;
 				}
-				if (g1mparts.get(i).type == BIDE.TYPE_CAPT || g1mparts.get(i).type == BIDE.TYPE_PICT) {
+				if (g1mParts.get(i).type == BIDE.TYPE_CAPT || g1mParts.get(i).type == BIDE.TYPE_PICT) {
 					try {
-						int nb = Integer.parseInt(g1mparts.get(i).name.substring(4));
+						int nb = Integer.parseInt(g1mParts.get(i).name.substring(4));
 						if (nb < 1 || nb > 20) {
-							error("Number of "+g1mparts.get(i).name+" should be 1-20!");
+							error("Number of "+ g1mParts.get(i).name+" should be 1-20!");
 							return;
 						}
 					} catch (NumberFormatException e) {
-						error(g1mparts.get(i).name, "Invalid picture/capture number!");
+						error(g1mParts.get(i).name, "Invalid picture/capture number!");
 						return;
 					}
 				}
 				
 				name.add(Arrays.copyOfRange(padding, 0, 8-name.length()));
 				
-				if (g1mparts.get(i).type == BIDE.TYPE_PROG) {
-					CasioString password = new CasioString(asciiToCasio(g1mparts.get(i).option, true, g1mparts.get(i).name+".password", 2, macros));
+				if (g1mParts.get(i).type == BIDE.TYPE_PROG) {
+					CasioString password = new CasioString(asciiToCasio(g1mParts.get(i).option, true, g1mParts.get(i).name+".password", 2, macros));
 					if (password.length() > 8) {
-						error("Program \""+g1mparts.get(i).name+"\" has a password too long (8 characters max)!");
+						error("Program \""+ g1mParts.get(i).name+"\" has a password too long (8 characters max)!");
 						return;
 					}
 					password.add(Arrays.copyOfRange(padding, 0, 8-password.length()));
@@ -521,22 +524,22 @@ public class BIDE {
 					} else {
 						part.add(new byte[]{0,0});
 					}
-					part.add(asciiToCasio((String)g1mparts.get(i).content, false, g1mparts.get(i).name, 1, macros));
+					part.add(asciiToCasio((String) g1mParts.get(i).content, false, g1mParts.get(i).name, 1, macros));
 					part.add(Arrays.copyOfRange(padding, 0, 4-part.length()%4));
-				} else if (g1mparts.get(i).type == BIDE.TYPE_PICT){
-					part.add((Byte[])g1mparts.get(i).content);
+				} else if (g1mParts.get(i).type == BIDE.TYPE_PICT){
+					part.add((Byte[]) g1mParts.get(i).content);
 				} else {
 					part.add(new byte[]{0x00, (byte)0x80, 0x00, 0x40});
-					part.add((Byte[])g1mparts.get(i).content);
+					part.add((Byte[]) g1mParts.get(i).content);
 				}
-				g1mparts.get(i).binaryContent = new CasioString(part);
+				g1mParts.get(i).binaryContent = new CasioString(part);
 			}
-			g1mwrapper.addPart(part, name, g1mparts.get(i).type);
+			g1mwrapper.addPart(part, name, g1mParts.get(i).type);
 		}
 		g1mwrapper.generateG1M(destPath);
 		
-		for (int i = 0; i < BIDE.g1mparts.size(); i++) {
-			BIDE.g1mparts.get(i).isEditedSinceLastSaveToG1M = false;
+		for (int i = 0; i < BIDE.g1mParts.size(); i++) {
+			BIDE.g1mParts.get(i).isEditedSinceLastSaveToG1M = false;
 		}
 		
 		System.out.println("Finished writing to g1m in "+(System.currentTimeMillis()-time)+"ms");
@@ -546,17 +549,17 @@ public class BIDE {
 	public static void writeToTxt(String destPath) {
 		System.out.println("Saving to "+destPath+"...");
 		String result = "";
-		for (int i = 0; i < g1mparts.size(); i++) {
-			if (g1mparts.get(i).type == BIDE.TYPE_PROG) {
+		for (int i = 0; i < g1mParts.size(); i++) {
+			if (g1mParts.get(i).type == BIDE.TYPE_PROG) {
 				if (!BIDE.isCLI) {
-					result += ((ProgScrollPane)g1mparts.get(i).comp).textPane.getText();
+					result += ((ProgScrollPane) g1mParts.get(i).comp).textPane.getText();
 				} else {
-					result += g1mparts.get(i).content;
+					result += g1mParts.get(i).content;
 				}
 				result += "\n#End of part\n";
-			} else if (g1mparts.get(i).type == BIDE.TYPE_PICT || g1mparts.get(i).type == BIDE.TYPE_CAPT) {
-				Picture pict = ((Picture)((JScrollPane)(g1mparts.get(i).comp)).getViewport().getView());
-				if (g1mparts.get(i).type == BIDE.TYPE_PICT) {
+			} else if (g1mParts.get(i).type == BIDE.TYPE_PICT || g1mParts.get(i).type == BIDE.TYPE_CAPT) {
+				Picture pict = ((Picture)((JScrollPane)(g1mParts.get(i).comp)).getViewport().getView());
+				if (g1mParts.get(i).type == BIDE.TYPE_PICT) {
 					result += "#Picture name: ";
 				} else {
 					result += "#Capture name: ";
@@ -564,7 +567,7 @@ public class BIDE {
 				result += pict.namejtf.getText() + "\n"
 						+ "#Size: 0x" + pict.sizejtf.getText() + "\n"
 						+ pictToAscii(pict.pictPanel.pixels);
-				if (g1mparts.get(i).type != BIDE.TYPE_CAPT) {
+				if (g1mParts.get(i).type != BIDE.TYPE_CAPT) {
 					result += pictWarning + pictToAscii(pict.pictPanel2.pixels);
 				}
 				result += "\n#End of part\n";
@@ -662,7 +665,7 @@ public class BIDE {
 				} else if (lines[i].charAt(j) == '▄' || lines[i].charAt(j) == ' ') {
 					binary += '0';
 				} else {
-					error(progName, i+startLine, "Unallowed character '"+lines[i].charAt(j)+"' in picture!");
+					error(progName, i+startLine, "Disallowed character '"+lines[i].charAt(j)+"' in picture!");
 					return null;
 				}
 			}
@@ -843,7 +846,7 @@ public class BIDE {
 				
 				for (int j = 0; j < opcodes.size(); j++) {
 					
-					//If string, skip opcodes that are not entities/characters in order to avoid FA-124ing
+					// If string, skip opcodes that are not entities/characters in order to avoid FA-124ing
 					if (allowUnknownOpcodes || currentPosIsString || currentPosIsComment) {
 						if (opcodes.get(j).text.length() != 1
 								&& !opcodes.get(j).text.startsWith("&")
@@ -1304,9 +1307,9 @@ public class BIDE {
 			"&#F95B;", "Norm",
 		};
 		
-		for (int g = 0; g < BIDE.g1mparts.size(); g++) {
-			if (BIDE.g1mparts.get(g).comp instanceof ProgScrollPane) {
-				String content = ((ProgScrollPane)BIDE.g1mparts.get(g).comp).textPane.getText();
+		for (int g = 0; g < BIDE.g1mParts.size(); g++) {
+			if (BIDE.g1mParts.get(g).comp instanceof ProgScrollPane) {
+				String content = ((ProgScrollPane)BIDE.g1mParts.get(g).comp).textPane.getText();
 				String[] lines = content.split("\\n|\\r|\\r\\n");
 				
 				for (int h = 0; h < lines.length; h++) {
@@ -1355,7 +1358,7 @@ public class BIDE {
 					}
 				}
 				
-				((ProgScrollPane)BIDE.g1mparts.get(g).comp).textPane.setText(Arrays.stream(lines).collect(Collectors.joining("\n")));
+				((ProgScrollPane)BIDE.g1mParts.get(g).comp).textPane.setText(Arrays.stream(lines).collect(Collectors.joining("\n")));
 				
 			}
 		}
