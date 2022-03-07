@@ -6,12 +6,7 @@
 
     <groupId>zezombye.BIDE</groupId>
     <artifactId>BIDE</artifactId>
-    <version>4.3.2</version>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
+    <version>5.0.0</version>
 
     <dependencies>
         <dependency>
@@ -35,5 +30,28 @@
             <version>4.5.2</version>
         </dependency>
     </dependencies>
-    
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+    <name>BIDE</name>
+    <description>The BASIC IDE for Casio BASIC</description>
+    <url>https://github.com/Zezombye/BIDE</url>
+    <inceptionYear>2017</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>GPL-3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>Zezombye</id>
+            <url>https://github.com/Zezombye</url>
+        </developer>
+    </developers>
 </project>
