@@ -118,12 +118,18 @@ public class UI {
 		open.addActionListener(event -> openFile(false));
 		
 
-		window.getRootPane().registerKeyboardAction(open.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		window.getRootPane().registerKeyboardAction(
+				open.getActionListeners()[0],
+				KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
 		
 		ToolbarButton save = new ToolbarButton("saveFile.png", "Save file (ctrl+S)");
 		save.addActionListener(event -> saveFile(true, false, false));
 		
-		window.getRootPane().registerKeyboardAction(save.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		window.getRootPane().registerKeyboardAction(
+				save.getActionListeners()[0],
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
 		
 		
 		ToolbarButton newProg = new ToolbarButton("newProg.png", "New Basic Casio program");
@@ -138,7 +144,10 @@ public class UI {
 		ToolbarButton run = new ToolbarButton("run.png", "Run file (ctrl+R)");
 		run.addActionListener(event -> saveFile(true, false, true));
 
-		window.getRootPane().registerKeyboardAction(run.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		window.getRootPane().registerKeyboardAction(
+				run.getActionListeners()[0],
+				KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
 		
 		menuBar.add(open);
 		menuBar.add(save);
@@ -174,16 +183,14 @@ public class UI {
 		});
 		fileMenu.add(saveg1m);
 		JMenuItem saveTxt = new JMenuItem("Save to .bide file");
-		saveTxt.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
-				try {
-					if (BIDE.pathToSavedG1M.isEmpty()) {
-						BIDE.pathToSavedG1M = BIDE.pathToG1M;
-					}
-					BIDE.pathToSavedG1M = BIDE.pathToSavedG1M.substring(0, BIDE.pathToSavedG1M.lastIndexOf("."))+".bide";
-				} catch (Exception ignored) {}
-				saveFile(false, true, false);
-			}
+		saveTxt.addActionListener(event -> {
+			try {
+				if (BIDE.pathToSavedG1M.isEmpty()) {
+					BIDE.pathToSavedG1M = BIDE.pathToG1M;
+				}
+				BIDE.pathToSavedG1M = BIDE.pathToSavedG1M.substring(0, BIDE.pathToSavedG1M.lastIndexOf("."))+".bide";
+			} catch (Exception ignored) {}
+			saveFile(false, true, false);
 		});
 		fileMenu.add(saveTxt);
 		
@@ -197,7 +204,10 @@ public class UI {
 			}
 			
 		});
-		((AbstractAction)showReplaceDialog.getActionListeners()[0]).putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, window.getToolkit().getMenuShortcutKeyMask()));
+		((AbstractAction) showReplaceDialog.getActionListeners()[0]).putValue(
+				AbstractAction.ACCELERATOR_KEY,
+				KeyStroke.getKeyStroke(KeyEvent.VK_F, window.getToolkit().getMenuShortcutKeyMaskEx())
+		);
 		showReplaceDialog.setText("Find/Replace");
 		editMenu.add(showReplaceDialog);
 		
@@ -247,20 +257,11 @@ public class UI {
 		takeEmuScreenScreenshot.addActionListener(event -> BIDE.autoImport.storeEmuScreen());
 		emulatorMenu.add(takeEmuScreenScreenshot);
 		JMenuItem benchmark = new JMenuItem("Run benchmark");
-		benchmark.addActionListener(event -> new Thread(new Runnable() {
-			public void run() {
-				BIDE.autoImport.benchmark();
-			}
-		}).start());
+		benchmark.addActionListener(event -> new Thread(() -> BIDE.autoImport.benchmark()).start());
 		emulatorMenu.add(benchmark);
 		window.setJMenuBar(menuBar2);
 
 		window.setVisible(true);
-		// Because window.repaint() does not work...
-		// Java pls
-		// window.setSize(window.getWidth()+1, window.getHeight()+1);
-		// window.setSize(window.getWidth()-1, window.getHeight()-1);
-		
 	}
 	public ProgramTextPane getTextPane() {
 		try {
@@ -474,7 +475,6 @@ public class UI {
 		new Thread(() -> {
 
 			try {
-
 				if (saveAs || BIDE.pathToSavedG1M.isEmpty()) {
 					if (BIDE.pathToSavedG1M.isEmpty()) {
 						BIDE.pathToSavedG1M = BIDE.pathToG1M;

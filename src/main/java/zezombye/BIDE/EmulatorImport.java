@@ -87,8 +87,6 @@ public class EmulatorImport {
     
     public Object findEmulator() {
 		emulatorHWND = null;
-		// menu = ImageIO.read(new File("C:\\Users\\Catherine\\Desktop\\menu.png"));
-		// long time = System.currentTimeMillis();
 		ArrayList<String> titles = enumWindows();
 		if (titles.contains("Ouvrir")) {
 			BIDE.error("There is another window titled \"Ouvrir\"");

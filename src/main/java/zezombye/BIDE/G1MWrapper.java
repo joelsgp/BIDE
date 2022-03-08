@@ -69,10 +69,6 @@ public class G1MWrapper {
 		if (BIDE.runOn.equals("emulator")) {
 			BIDE.autoImport.autoImport(destPath);
 		}
-// todo
-// 		else if (BIDE.runOn.equals("calculator")){
-//
-// 		}
 	}
 	
 	public int getPartID(int partType) {

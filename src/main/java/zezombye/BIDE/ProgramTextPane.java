@@ -1,12 +1,8 @@
 package zezombye.BIDE;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
-
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
 
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.autocomplete.BasicCompletion;
@@ -79,31 +75,6 @@ public class ProgramTextPane extends RSyntaxTextArea {
 		
 		this.setSyntaxScheme(ss);
 		
-		if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
-			//this.setCaretStyle(RSyntaxTextArea.OVERWRITE_MODE, CaretStyle.BLOCK_STYLE);
-			this.setCaretStyle(OVERWRITE_MODE, CaretStyle.BLOCK_BORDER_STYLE);
-			this.setTextMode(RSyntaxTextArea.OVERWRITE_MODE);
-			//this.setCaretColor(new Color(0, 128, 255));
-			this.setCaretColor(Color.RED);
-			this.setLineWrap(false);
-			((AbstractDocument)this.getDocument()).setDocumentFilter(new DocumentFilter() {
-				@Override
-			    public void replace(final FilterBypass fb, final int offs, final int length, final String str, final AttributeSet a) throws BadLocationException {
-			    	if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
-						switch (str) {
-							case "'" -> super.replace(fb, offs, length, "▀", a);
-							case "," -> super.replace(fb, offs, length, "▄", a);
-							case ":" -> super.replace(fb, offs, length, "█", a);
-							default -> super.replace(fb, offs, length, str, a);
-						}
-			    	} else {
-			            super.replace(fb, offs, length, str, a);
-			    	}
-			    }
-			});
-			
-		}
-		
 		if (BIDE.options.getProperty("autocomplete").equals("true")) {
 			AutoCompletion ac = new AutoCompletion(cp);
 			ac.setAutoActivationEnabled(true);
@@ -134,7 +105,7 @@ public class ProgramTextPane extends RSyntaxTextArea {
 			if (opcode.text.length() > 1 && opcode.text.matches("([ -~])+")) {
 				String txt = opcode.text.replaceAll("^ +", "");
 				String summary = generateSummary(opcode);
-				if (summary == null) continue;
+
 				//Add opcodes with unicode
 				if (opcode.unicode != null && BIDE.options.getProperty("allowUnicode").equals("true")) {
 					//Add unicode representation of character in description
@@ -156,7 +127,7 @@ public class ProgramTextPane extends RSyntaxTextArea {
 		}
 		cp = provider;
 	    for (int i = 0; i < BIDE.macros.size(); i++) {
-	    	if (BIDE.macros.get(i).text.length() > 1 && BIDE.macros.get(i).text.matches("[\\w\\(\\), ]+")) {
+	    	if (BIDE.macros.get(i).text.length() > 1 && BIDE.macros.get(i).text.matches("[\\w(), ]+")) {
 	    		addMacroToCompletions(BIDE.macros.get(i));
 	    	}
 	    	
@@ -214,15 +185,15 @@ public class ProgramTextPane extends RSyntaxTextArea {
 				.replaceAll("&", "&amp;")
 				.replaceAll("<", "&lt;")
 				.replaceAll(">", "&gt;")
-				.replaceAll("\\[i\\]", "<em>")
-				.replaceAll("\\[\\/i\\]", "</em>")
-				.replaceAll("\\[b\\]", "<b>")
-				.replaceAll("\\[\\/b\\]", "</b>")
-				.replaceAll("\\[code\\]", "<font face='DejaVu Avec Casio' size='12px'><span style='background-color:rgb(240,240,240);'>")
-				.replaceAll("\\[\\/code\\]", "</span></font>")
-				.replaceAll("(\\[img\\])([\\w\\/\\.]+)", "<img src='"+relativeImgPath+"$2")
-				.replaceAll("\\[\\/img\\]", "'/>")
-				.replaceAll("  ", "&nbsp;&nbsp;")
+				.replaceAll("\\[i]", "<em>")
+				.replaceAll("\\[/i]", "</em>")
+				.replaceAll("\\[b]", "<b>")
+				.replaceAll("\\[/b]", "</b>")
+				.replaceAll("\\[code]", "<font face='DejaVu Avec Casio' size='12px'><span style='background-color:rgb(240,240,240);'>")
+				.replaceAll("\\[/code]", "</span></font>")
+				.replaceAll("(\\[img])([\\w/.]+)", "<img src='"+relativeImgPath+"$2")
+				.replaceAll("\\[/img]", "'/>")
+				.replaceAll(" {2}", "&nbsp;&nbsp;")
 				.replaceAll("\\t", "&#09;")
 				.replaceAll("\n", "<br>");
 	}

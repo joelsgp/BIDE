@@ -130,7 +130,7 @@ class DrawstatPanel extends JPanel {
 	Dimension size = new Dimension(128*zoom+1, 64*zoom+1);
 	
 	int[][] pixels = new int[128][64];
-	ArrayList<Line> lines = new ArrayList<Line>();
+	ArrayList<Line> lines = new ArrayList<>();
 	boolean drawLineOnHover = false;
 	MultiDrawstatGenerator mdg;
 	int xClick=-1, yClick=-1;

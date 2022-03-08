@@ -167,24 +167,22 @@ public class BIDE {
 			if (options.getProperty("runOn").equals("emulator")) {
 				autoImport = new EmulatorImport();
 			}
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					ui.createAndDisplayUI();
-					
-					ProgramTextPane.initAutoComplete();
+			SwingUtilities.invokeLater(() -> {
+				ui.createAndDisplayUI();
 
-					System.out.println("Finished initialization");
-					if (!debug) {checkForNewVersion();}
-					
-					// Open eventual files provided as arguments
-					
-					if (args.length > 0) {
-						File[] files = new File[args.length];
-						for (int i = 0; i < args.length; i++) {
-							files[i] = new File(args[i]);
-						}
-						ui.openFile(false, files);
+				ProgramTextPane.initAutoComplete();
+
+				System.out.println("Finished initialization");
+				if (!debug) {checkForNewVersion();}
+
+				// Open eventual files provided as arguments
+
+				if (args.length > 0) {
+					File[] files = new File[args.length];
+					for (int i = 0; i < args.length; i++) {
+						files[i] = new File(args[i]);
 					}
+					ui.openFile(false, files);
 				}
 			});
 		}
@@ -214,7 +212,7 @@ public class BIDE {
 			
 			System.out.println("Parsing part \""+name+"\"");
 			// Get 2nd line, which is option
-			String option = "";
+			String option;
 			try {
 				option = progsTxt[i].substring(
 						progsTxt[i].indexOf('\n')+1,
@@ -297,7 +295,7 @@ public class BIDE {
 			} else if (g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_PICT || g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_CAPT) {
 				String name = casioToAscii(g1mparser.getPartName(g1mparser.parts.get(h)), false);
 				
-				CasioString content = null;
+				CasioString content;
 				if (g1mparser.getPartType(g1mparser.parts.get(h)) == TYPE_PICT) {
 					System.out.println("Found picture \""+name+"\"");
 					content = g1mparser.getPartContent(g1mparser.parts.get(h));
@@ -596,7 +594,7 @@ public class BIDE {
 		// Split on lines
 		String[] lines = content.split("\\n|\\r|\\r\\n");
 		StringBuilder binary = new StringBuilder();
-		ArrayList<Byte> bytes = new ArrayList<Byte>();
+		ArrayList<Byte> bytes = new ArrayList<>();
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].isEmpty() || lines[i].startsWith("'") || lines[i].startsWith("#") || lines[i].startsWith("▀") || lines[i].startsWith("▄")) {
 				continue;
@@ -708,7 +706,6 @@ public class BIDE {
 				
 				// Test for macros
 				if (!allowUnknownOpcodes && !currentPosIsString && !currentPosIsComment) {
-					boolean foundMacro = false;
 					for (Macro macro : macros) {
 						if (macro.isFunction) {
 
@@ -721,7 +718,7 @@ public class BIDE {
 								int k = 0;
 								boolean currentPosIsString2 = false;
 								boolean escapeNextChar2 = false;
-								ArrayList<Integer> commaPos = new ArrayList<Integer>();
+								ArrayList<Integer> commaPos = new ArrayList<>();
 								commaPos.add(beginParenthesisIndex);
 								try {
 									for (k = beginParenthesisIndex + 1; ; k++) {
@@ -1306,7 +1303,7 @@ public class BIDE {
     	} 
     	catch (Exception e) 
     	{
-    	    System.out.println(e);
+    	    e.printStackTrace();
     	}
     	
         URL oracle;
