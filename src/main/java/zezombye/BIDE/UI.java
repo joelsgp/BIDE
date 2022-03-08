@@ -171,8 +171,8 @@ public class UI {
 		addToFile.addActionListener(e -> openFile(true));
 		fileMenu.add(addToFile);
 		
-		JMenuItem saveg1m = new JMenuItem("Save to g1m");
-		saveg1m.addActionListener(e -> {
+		JMenuItem saveG1M = new JMenuItem("Save to g1m");
+		saveG1M.addActionListener(e -> {
 			try {
 				if (BIDE.pathToSavedG1M.isEmpty()) {
 					BIDE.pathToSavedG1M = BIDE.pathToG1M;
@@ -181,7 +181,7 @@ public class UI {
 			} catch (Exception ignored) {}
 			saveFile(true, true, false);
 		});
-		fileMenu.add(saveg1m);
+		fileMenu.add(saveG1M);
 		JMenuItem saveTxt = new JMenuItem("Save to .bide file");
 		saveTxt.addActionListener(event -> {
 			try {
@@ -298,72 +298,24 @@ public class UI {
 			} else if (type == BIDE.TYPE_OPCODE) {
 				name = "Opcodes List";
 				content = "#\n#DO NOT EDIT THIS TAB, changes won't be saved!\n#\n";
-				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/opcodes.json"), StandardCharsets.UTF_8));
-				String line;
-				StringBuilder stringBuilder = new StringBuilder();
-
-				try {
-					while((line = reader.readLine()) != null) {
-						stringBuilder.append(line);
-						stringBuilder.append("\n");
-					}
-
-					content += stringBuilder.toString();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				BufferedReader reader = new BufferedReader(new InputStreamReader(
+						BIDE.class.getResourceAsStream("/opcodes.json"), StandardCharsets.UTF_8
+				));
+				content = readBuffer(content, reader);
 
 			} else if (type == BIDE.TYPE_CHARLIST) {
 				name = "All characters";
-				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/characters.txt"), StandardCharsets.UTF_8));
-				String line;
-				StringBuilder stringBuilder = new StringBuilder();
-
-				try {
-					while((line = reader.readLine()) != null) {
-						stringBuilder.append(line);
-						stringBuilder.append("\n");
-					}
-
-					content += stringBuilder.toString();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				BufferedReader reader = new BufferedReader(new InputStreamReader(
+						BIDE.class.getResourceAsStream("/characters.txt"), StandardCharsets.UTF_8
+				));
+				content = readBuffer(content, reader);
 
 			} else if (type == BIDE.TYPE_COLORATION) {
 				name = "Syntax coloration test";
-				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/testColoration.txt"), StandardCharsets.UTF_8));
-				String line;
-				StringBuilder stringBuilder = new StringBuilder();
-
-				try {
-					while((line = reader.readLine()) != null) {
-						stringBuilder.append(line);
-						stringBuilder.append("\n");
-					}
-
-					content += stringBuilder.toString();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				BufferedReader reader = new BufferedReader(new InputStreamReader(
+						BIDE.class.getResourceAsStream("/testColoration.txt"), StandardCharsets.UTF_8
+				));
+				content = readBuffer(content, reader);
 
 			} else {
 				BIDE.error("Unknown type "+type);
@@ -377,7 +329,30 @@ public class UI {
 		
 		selectLastTab();
 	}
-	
+
+	private String readBuffer(String content, BufferedReader reader) {
+		String line;
+		StringBuilder stringBuilder = new StringBuilder();
+
+		try {
+			while((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+				stringBuilder.append("\n");
+			}
+
+			content += stringBuilder.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return content;
+	}
+
 	public void selectLastTab() {
 		jtp.setSelectedIndex(jtp.getTabCount()-1);
 	    try {
@@ -492,14 +467,11 @@ public class UI {
 					BIDE.pathToSavedG1M = input.getAbsolutePath();
 
 					// Check for extension
-					try {
-						BIDE.pathToSavedG1M.substring(BIDE.pathToSavedG1M.lastIndexOf('.'));
-					} catch (StringIndexOutOfBoundsException e) {
+					if (!BIDE.pathToSavedG1M.contains(".")) {
 						BIDE.error("Please input an extension (.bide or .g1m)");
 						BIDE.pathToSavedG1M = "";
 						return;
 					}
-
 				}
 
 

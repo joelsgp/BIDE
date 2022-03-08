@@ -28,12 +28,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-/*
- * TODO:
- * 	add find and replace
- */
+
+// todo:
+//     add find and replace
+
 
 public class BIDE {
+	public final static String VERSION = "5.0.0";
 	
 	public static List<Opcode> opcodes = new ArrayList<>();
 	public static List<Macro> macros = new ArrayList<>();
@@ -42,12 +43,8 @@ public class BIDE {
 	
 	public static String pathToG1M = System.getProperty("user.home")+"/desktop/";
 	public static String pathToSavedG1M = "";
-	public static final String pathToOptions = System.getProperty("user.home")+"/BIDE/options.txt";
+	public static final String pathToOptions = System.getProperty("user.home")+"/.bide/options.txt";
 	public static UI ui = new UI();
-	
-	public static String runOn = "none";
-	
-	public final static String VERSION = "4.3.1";
 	
 	public final static int TYPE_PROG = 0;
 	public final static int TYPE_PICT = 3;
@@ -63,7 +60,8 @@ public class BIDE {
 	
 	static Options options = new Options();
 	public static boolean isCLI = false;
-	
+
+	public static String runOn = "none";
 	public static EmulatorImport autoImport;
 	public static String[] args;
 	

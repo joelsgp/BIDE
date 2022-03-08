@@ -344,50 +344,39 @@ class DrawstatPanel extends JPanel {
 	        int iy = y1 < y2 ? 1 : -1;
 	        
 	        //If dotted line, draw half of the pixels
-	        //If thick&dotted, draw one third
+	        //If dotted and thick, draw one third
 	        int nbPixels = 0;
-	        
-	        if (dy <= dx) {
-	            for (;;) {
-	                if (!dottedLine || dottedLine && !thickLine && nbPixels%2 == 0 || dottedLine && thickLine && nbPixels%3 == 0) {
-	                	pixels[x1][y1] = 1;
-	                	if (thickLine) {
-	                		pixels[x1-1][y1] = 1;
-	                		pixels[x1-1][y1+1] = 1;
-	                		pixels[x1][y1+1] = 1;
-	                	}
-	                }
-	                nbPixels++;
-	                if (x1 == x2)
-	                    break;
-	                x1 += ix;
-	                d += dy2;
-	                if (d > dx) {
-	                    y1 += iy;
-	                    d -= dx2;
-	                }
-	            }
-	        } else {
-	            for (;;) {
-	            	if (!dottedLine || dottedLine && !thickLine && nbPixels%2 == 0 || dottedLine && thickLine && nbPixels%3 == 0) {
-	                	pixels[x1][y1] = 1;
-	                	if (thickLine) {
-	                		pixels[x1-1][y1] = 1;
-	                		pixels[x1-1][y1+1] = 1;
-	                		pixels[x1][y1+1] = 1;
-	                	}
-	                }
-	                nbPixels++;
-	                if (y1 == y2)
-	                    break;
-	                y1 += iy;
-	                d += dx2;
-	                if (d > dy) {
-	                    x1 += ix;
-	                    d -= dy2;
-	                }
-	            }
-	        }
+
+			while (true) {
+				if (
+						(dottedLine && nbPixels % 2 == 0)
+								|| (dottedLine && thickLine && nbPixels % 3 == 0)
+				) {
+					pixels[x1][y1] = 1;
+					if (thickLine) {
+						pixels[x1-1][y1] = 1;
+						pixels[x1-1][y1+1] = 1;
+						pixels[x1][y1+1] = 1;
+					}
+				}
+				nbPixels++;
+				if (dy <= dx) {
+					if (x1 == x2) {
+						break;
+					}
+				} else {
+					if (y1 == y2) {
+						break;
+					}
+				}
+				x1 += ix;
+				d += dy2;
+				if (d > dx) {
+					y1 += iy;
+					d -= dx2;
+				}
+			}
+
 		} catch (ArrayIndexOutOfBoundsException ignored) {}
         
 	}

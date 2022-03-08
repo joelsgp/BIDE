@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.awt.Color;
 import java.util.regex.Pattern;
 
