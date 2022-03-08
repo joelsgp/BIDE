@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 
 public class BIDE {
-    public final static String VERSION = "5.0.0";
+    public final static String VERSION = "5.0.0a";
 
     public static List<Opcode> opcodes = new ArrayList<>();
     public static List<Macro> macros = new ArrayList<>();

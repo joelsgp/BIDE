@@ -6,7 +6,7 @@
 
     <groupId>zezombye.BIDE</groupId>
     <artifactId>BIDE</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.0a</version>
 
     <dependencies>
         <dependency>
