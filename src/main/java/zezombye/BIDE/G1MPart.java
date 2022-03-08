@@ -1,12 +1,10 @@
 package zezombye.BIDE;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import org.fife.ui.rtextarea.RTextScrollPane;
 
 
 public class G1MPart {

@@ -1,11 +1,11 @@
 package zezombye.BIDE;
 
-import javax.swing.text.Segment;
-
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
+
+import javax.swing.text.Segment;
 
 
 public class SyntaxColoration extends AbstractTokenMaker {

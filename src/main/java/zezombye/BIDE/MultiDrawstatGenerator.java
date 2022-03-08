@@ -1,5 +1,6 @@
 package zezombye.BIDE;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -8,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import javax.swing.*;
 
 
 public class MultiDrawstatGenerator extends JFrame {

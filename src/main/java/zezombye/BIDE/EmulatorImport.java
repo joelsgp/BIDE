@@ -1,16 +1,5 @@
 package zezombye.BIDE;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
@@ -19,9 +8,17 @@ import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.win32.StdCallLibrary;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 
 public class EmulatorImport {
-	
+
 	public interface User32 extends StdCallLibrary {
 	    User32 INSTANCE = Native.load("user32", User32.class);
 
@@ -31,7 +28,7 @@ public class EmulatorImport {
 	    boolean SetForegroundWindow(WinDef.HWND hWnd);
 		void ShowWindow(HWND emulatorHWND, int i);
 	}
-	
+
 
     final User32 user32 = User32.INSTANCE;
     HWND emulatorHWND = null;
@@ -39,7 +36,7 @@ public class EmulatorImport {
     Robot robot;
     BufferedImage confirmation, memMenu, complete, beginBenchmark, endBenchmark;
     int screenX, screenY, screenWidth, screenHeight;
-    
+
     public EmulatorImport() {
     	try {
 			confirmation = ImageIO.read(getClass().getResourceAsStream("/images/confirmation.png"));
@@ -60,7 +57,7 @@ public class EmulatorImport {
 		screenWidth = Integer.parseInt(BIDE.options.getProperty("screenWidth"));
 		screenHeight = Integer.parseInt(BIDE.options.getProperty("screenHeight"));
     }
-    
+
     public void benchmark() {
     	if (findEmulator() == null) return;
     	for (int i = 1;; i++) {
@@ -85,7 +82,7 @@ public class EmulatorImport {
 			}
     	}
     }
-    
+
     public Object findEmulator() {
 		emulatorHWND = null;
 		ArrayList<String> titles = enumWindows();
@@ -101,15 +98,15 @@ public class EmulatorImport {
 		user32.SetForegroundWindow(emulatorHWND);
 		return "done";
     }
-    
+
 	public void autoImport(String path) {
     	if (findEmulator() == null) return;
     	// The user is supposed to be on the menu
     	inputKey(KeyEvent.VK_PAGE_DOWN, emuSleep);
-    	
+
     	// Go to memory
     	inputKey('F', emuSleep);
-    	
+
     	long end = System.currentTimeMillis()+1000;
     	boolean foundMemMenu = false;
     	while (System.currentTimeMillis() < end) {
@@ -137,7 +134,7 @@ public class EmulatorImport {
 		}
     	inputString("                                                                           "+path.replaceAll("/", "\\\\"), 1);
     	inputKey(KeyEvent.VK_ENTER, 0);
-    	
+
     	//Wait for confirmation screen (copy to main mem/storage mem)
     	end = System.currentTimeMillis()+2000;
     	while (!testImgEquality(getEmuScreen(), confirmation) && System.currentTimeMillis() < end) {}
@@ -146,7 +143,7 @@ public class EmulatorImport {
     		return;
     	}
     	inputKey('1', emuSleep);
-    	
+
     	//There can be warning screens if the file already exists. In doubt, spam F1
     	end = System.currentTimeMillis()+4000;
     	while (!testImgEquality(getEmuScreen(), complete) && System.currentTimeMillis() < end) {
@@ -156,12 +153,12 @@ public class EmulatorImport {
     	inputKey(KeyEvent.VK_PAGE_DOWN, emuSleep);
     	inputKey('B', emuSleep);
 	}
-	
+
 	public boolean testImgEquality(BufferedImage image1, BufferedImage image2) {
 		int width;
 		int height;
 
-		if (image1.getWidth() == (width = image2.getWidth()) && 
+		if (image1.getWidth() == (width = image2.getWidth()) &&
 		    image1.getHeight() == (height = image2.getHeight())) {
 
 		    for (int x = 0; x < width; x++){
@@ -176,7 +173,7 @@ public class EmulatorImport {
 		}
 		return true;
 	}
-	
+
 	public BufferedImage getEmuScreen() {
 		RECT dimensionsOfWindow = new RECT();
 		user32.GetWindowRect(emulatorHWND, dimensionsOfWindow);
@@ -187,14 +184,14 @@ public class EmulatorImport {
 		screen.height = screenHeight;
         return robot.createScreenCapture(screen);
 	}
-	
+
 	public BufferedImage getEmuScreenshot() {
 		RECT dimensionsOfWindow = new RECT();
 		user32.GetWindowRect(emulatorHWND, dimensionsOfWindow);
 		Rectangle screen = dimensionsOfWindow.toRectangle();
         return robot.createScreenCapture(screen);
 	}
-	
+
 	//storeEmuScreenshot() takes a screenshot of the whole emulator, while storeEmuScreen() only takes a screenshot of the calculator screen.
 	public void storeEmuScreenshot() {
 		try {
@@ -206,7 +203,7 @@ public class EmulatorImport {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void storeEmuScreen() {
 		try {
 			if (findEmulator() == null) return;
@@ -217,15 +214,15 @@ public class EmulatorImport {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void inputString(String str, int sleep){
 		for (int i = 0; i < str.length(); i++) {
 			inputKey(str.charAt(i), sleep);
 		}
 	}
-	
+
 	public void inputKey(char key, int sleep) {
-		
+
 		//Check for caps
 		if (key >= 'A' && key <= 'Z') {
 			inputKeyWithShift(key, sleep);
@@ -257,10 +254,10 @@ public class EmulatorImport {
 
 		    robot.keyRelease(KeyEvent.VK_ALT);
 		}
-		
-		
+
+
 	}
-	
+
 	public void inputKeyWithShift(int key, int sleep) {
 		//user32.SetForegroundWindow(emulatorHWND);
 		robot.keyPress(KeyEvent.VK_SHIFT);
@@ -278,7 +275,7 @@ public class EmulatorImport {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void inputKey(int key, int sleep) {
 		//user32.SetForegroundWindow(emulatorHWND);
 		robot.keyPress(key);
@@ -294,7 +291,7 @@ public class EmulatorImport {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ArrayList<String> enumWindows() {
 		ArrayList<String> titles = new ArrayList<>();
 		user32.EnumWindows((hWnd, arg1) -> {

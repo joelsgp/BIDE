@@ -1,8 +1,8 @@
 package zezombye.BIDE;
 
+import javax.swing.*;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import javax.swing.JTextArea;
 
 
 public class CustomOutputStream extends OutputStream {

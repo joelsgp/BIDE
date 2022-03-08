@@ -1,19 +1,15 @@
 package zezombye.BIDE;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Comparator;
-
-import org.fife.ui.autocomplete.AutoCompletion;
-import org.fife.ui.autocomplete.BasicCompletion;
-import org.fife.ui.autocomplete.CompletionCellRenderer;
-import org.fife.ui.autocomplete.DefaultCompletionProvider;
-import org.fife.ui.autocomplete.ShorthandCompletion;
+import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rtextarea.CaretStyle;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 
 public class ProgramTextPane extends RSyntaxTextArea {

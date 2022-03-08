@@ -1,18 +1,11 @@
 package zezombye.BIDE;
 
-import java.awt.Color;
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
-
-import javax.swing.JTextPane;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 
 public class CustomDocumentFilter extends DocumentFilter {
