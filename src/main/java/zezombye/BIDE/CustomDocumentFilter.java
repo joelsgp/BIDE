@@ -13,17 +13,17 @@ public class CustomDocumentFilter extends DocumentFilter {
 
     public JTextPane textPane;
     public ArrayList<ColorationPattern> regexes;
-    
+
     public boolean isTooLaggy = false;
     public int type = 0;
-    
+
     public CustomDocumentFilter(JTextPane jtp, ColorationPattern[] regexes, int type) {
-    	this.textPane = jtp;
-    	this.regexes = new ArrayList<>(Arrays.asList(regexes));
-    	this.type = type;
-    	styledDocument = textPane.getStyledDocument();
+        this.textPane = jtp;
+        this.regexes = new ArrayList<>(Arrays.asList(regexes));
+        this.type = type;
+        styledDocument = textPane.getStyledDocument();
     }
-    
+
     @Override
     public void insertString(FilterBypass fb, int offset, String text, AttributeSet attributeSet) throws BadLocationException {
         super.insertString(fb, offset, text, attributeSet);
@@ -37,39 +37,38 @@ public class CustomDocumentFilter extends DocumentFilter {
 
         handleTextChanged();
     }
-    
+
     @Override
     public void replace(final FilterBypass fb, final int offs, final int length, final String str, final AttributeSet a) throws BadLocationException {
-    	if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
+        if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
             switch (str) {
                 case "'" -> super.replace(fb, offs, length, "▀", a);
                 case "," -> super.replace(fb, offs, length, "▄", a);
                 case ":" -> super.replace(fb, offs, length, "█", a);
                 default -> super.replace(fb, offs, length, str, a);
             }
-    	} else {
+        } else {
             super.replace(fb, offs, length, str, a);
-    	}
-        
+        }
+
         handleTextChanged();
     }
 
     /**
      * Runs your updates later, not during the event notification.
      */
-    private void handleTextChanged()
-    {
-    	if (!isTooLaggy) {
-    		updateTextStyles();
-    	}
+    private void handleTextChanged() {
+        if (!isTooLaggy) {
+            updateTextStyles();
+        }
     }
 
     private void updateTextStyles() {
         // Look for tokens and highlight them
-    	String textPaneText = textPane.getText();
-    	MutableAttributeSet sas = new SimpleAttributeSet();
-    	StyleConstants.setForeground(sas, Color.BLACK);
-    	
+        String textPaneText = textPane.getText();
+        MutableAttributeSet sas = new SimpleAttributeSet();
+        StyleConstants.setForeground(sas, Color.BLACK);
+
         // Clear existing styles
         styledDocument.setCharacterAttributes(0, textPane.getText().length(), sas, true);
 
