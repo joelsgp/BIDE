@@ -3,13 +3,9 @@ package zezombye.BIDE;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +30,9 @@ public class Picture extends JPanel {
 	String name;
 	JScrollPane jsp = new JScrollPane(this);
 	JPanel namePanel = new JPanel();
-	JTextField namejtf = new JTextField();
+	JTextField nameJtf;
 	JPanel sizePanel = new JPanel();
-	JTextField sizejtf = new JTextField();
+	JTextField sizeJtf;
 	PictPanel pictPanel = new PictPanel(0);
 	PictPanel pictPanel2 = new PictPanel(1);
 	JButton setSizeButton = new JButton("Set size");
@@ -70,9 +66,9 @@ public class Picture extends JPanel {
 		
 		this.add(namePanel);
 		namePanel.add(new JLabel("Name:"));
-		namejtf = new JTextField(name);
-		namejtf.setPreferredSize(new Dimension(50, 20));
-		namePanel.add(namejtf);
+		nameJtf = new JTextField(name);
+		nameJtf.setPreferredSize(new Dimension(50, 20));
+		namePanel.add(nameJtf);
 		this.name = name;
 		
 		this.setPreferredSize(new Dimension(1000, 1000));
@@ -90,9 +86,9 @@ public class Picture extends JPanel {
 		this.add(pictPanel2);
 		this.add(sizePanel);
 		sizePanel.add(new JLabel("Size (hex):"));
-		sizejtf = new JTextField(Integer.toHexString(size));
-		sizejtf.setPreferredSize(new Dimension(25, 20));
-		sizePanel.add(sizejtf);
+		sizeJtf = new JTextField(Integer.toHexString(size));
+		sizeJtf.setPreferredSize(new Dimension(25, 20));
+		sizePanel.add(sizeJtf);
 		this.add(setSizeButton);
 		this.add(exportPictButton);
 		
@@ -101,44 +97,30 @@ public class Picture extends JPanel {
 			setSizeButton.setVisible(false);
 		}
 		
-		this.addMouseWheelListener(new MouseWheelListener() {
-			@Override public void mouseWheelMoved(MouseWheelEvent e) {
-				// e.obey();
-				// e.conform();
-				e.consume();
-			    if (e.isControlDown()) {
-			        if (e.getWheelRotation() < 0) {            
-			            setZoom(zoom + 1);
-			        } else if (zoom > 2){
-			            setZoom(zoom - 1);             
-			        }
-			        jsp.paintComponents(jsp.getGraphics());
-			    } else {
-			    	getParent().dispatchEvent(e);
-			    }
-			    
-			}
-		});
-		
-		setSizeButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					setPictSize(Integer.parseInt(sizejtf.getText(), 16));
-				} catch (Exception e) {
-					BIDE.error("Invalid size!");
+		this.addMouseWheelListener(event -> {
+			event.consume();
+			if (event.isControlDown()) {
+				if (event.getWheelRotation() < 0) {
+					setZoom(zoom + 1);
+				} else if (zoom > 2){
+					setZoom(zoom - 1);
 				}
+				jsp.paintComponents(jsp.getGraphics());
+			} else {
+				getParent().dispatchEvent(event);
 			}
-			
+
 		});
 		
-		exportPictButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				exportPict();
+		setSizeButton.addActionListener(event -> {
+			try {
+				setPictSize(Integer.parseInt(sizeJtf.getText(), 16));
+			} catch (Exception e) {
+				BIDE.error("Invalid size!");
 			}
 		});
+		
+		exportPictButton.addActionListener(event -> exportPict());
 		
 		positionComponents();
 		setZoom(Integer.parseInt(BIDE.options.getProperty("pictZoom")));
@@ -285,34 +267,34 @@ class PictPanel extends JPanel {
 		this.setBackground(new Color(0xFFFFFF));
 				
 		this.addMouseListener(new MouseListener() {
-			@Override public void mouseClicked(MouseEvent arg0) {}
-			@Override public void mouseEntered(MouseEvent arg0) {}
-			@Override public void mouseExited(MouseEvent arg0) {}
-			@Override public void mousePressed(MouseEvent arg0) {
-				xClick = arg0.getX()/zoom;
-				yClick = arg0.getY()/zoom;
+			@Override public void mouseClicked(MouseEvent event) {}
+			@Override public void mouseEntered(MouseEvent event) {}
+			@Override public void mouseExited(MouseEvent event) {}
+			@Override public void mousePressed(MouseEvent event) {
+				xClick = event.getX()/zoom;
+				yClick = event.getY()/zoom;
 				if (xClick < 0 || xClick > 127 || yClick < 0 || yClick > 63) return;
-				if (SwingUtilities.isLeftMouseButton(arg0)) {
+				if (SwingUtilities.isLeftMouseButton(event)) {
 					setPixel(xClick, yClick, 1);
-				} else if (SwingUtilities.isRightMouseButton(arg0)) {
+				} else if (SwingUtilities.isRightMouseButton(event)) {
 					setPixel(xClick, yClick, 0);
 				}
 				
 				repaint();
 			}
-			@Override public void mouseReleased(MouseEvent arg0) {}
+			@Override public void mouseReleased(MouseEvent event) {}
 		});
 		
 		this.addMouseMotionListener(new MouseMotionListener() {
 
 			@Override
-			public void mouseDragged(MouseEvent arg0) {
-				xClick = arg0.getX()/zoom;
-				yClick = arg0.getY()/zoom;
+			public void mouseDragged(MouseEvent event) {
+				xClick = event.getX()/zoom;
+				yClick = event.getY()/zoom;
 				if (xClick < 0 || xClick > 127 || yClick < 0 || yClick > 63) return;
-				if (SwingUtilities.isLeftMouseButton(arg0)) {
+				if (SwingUtilities.isLeftMouseButton(event)) {
 					setPixel(xClick, yClick, 1);
-				} else if (SwingUtilities.isRightMouseButton(arg0)) {
+				} else if (SwingUtilities.isRightMouseButton(event)) {
 					setPixel(xClick, yClick, 0);
 				}
 				
@@ -320,7 +302,7 @@ class PictPanel extends JPanel {
 			}
 
 			@Override
-			public void mouseMoved(MouseEvent arg0) {
+			public void mouseMoved(MouseEvent event) {
 			}
 			
 		});

@@ -41,17 +41,17 @@ public class G1MPart {
 				textPane.getDocument().addDocumentListener(new DocumentListener() {
 
 					@Override
-					public void changedUpdate(DocumentEvent arg0) {
+					public void changedUpdate(DocumentEvent event) {
 						isEditedSinceLastSaveToG1M = true;
 					}
 
 					@Override
-					public void insertUpdate(DocumentEvent arg0) {
+					public void insertUpdate(DocumentEvent event) {
 						isEditedSinceLastSaveToG1M = true;
 					}
 
 					@Override
-					public void removeUpdate(DocumentEvent arg0) {
+					public void removeUpdate(DocumentEvent event) {
 						isEditedSinceLastSaveToG1M = true;
 					}
 					

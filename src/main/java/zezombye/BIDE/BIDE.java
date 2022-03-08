@@ -106,10 +106,10 @@ public class BIDE {
 							G1MParser g1mparser = new G1MParser(args[i]);
 							g1mparser.readG1M();
 
-							if (!g1mparser.isValid()) {
-								BIDE.readFromTxt(args[i]);
-							} else {
+							if (g1mparser.isValid()) {
 								BIDE.readFromG1M(args[i]);
+							} else {
+								BIDE.readFromTxt(args[i]);
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -128,10 +128,10 @@ public class BIDE {
 							G1MParser g1mparser = new G1MParser(args[i]);
 							g1mparser.readG1M();
 
-							if (!g1mparser.isValid()) {
-								BIDE.readFromTxt(args[i]);
-							} else {
+							if (g1mparser.isValid()) {
 								BIDE.readFromG1M(args[i]);
+							} else {
+								BIDE.readFromTxt(args[i]);
 							}
 						}
 
@@ -343,9 +343,9 @@ public class BIDE {
 				
 				Picture pict = ((Picture)((JScrollPane)(g1mParts.get(h).comp)).getViewport().getView());
 				
-				currentPart.name = pict.namejtf.getText();
+				currentPart.name = pict.nameJtf.getText();
 				currentPart.content = Stream.concat(Arrays.stream(pict.pictPanel.pixels), Arrays.stream(pict.pictPanel2.pixels)).toArray(Byte[]::new);
-				currentPart.option = pict.sizejtf.getText();
+				currentPart.option = pict.sizeJtf.getText();
 				
 				try {
 					Integer.parseInt(currentPart.option, 16);
@@ -539,7 +539,7 @@ public class BIDE {
 				} else {
 					result.append("#Capture name: ");
 				}
-				result.append(pict.namejtf.getText()).append("\n").append("#Size: 0x").append(pict.sizejtf.getText()).append("\n").append(pictToAscii(pict.pictPanel.pixels));
+				result.append(pict.nameJtf.getText()).append("\n").append("#Size: 0x").append(pict.sizeJtf.getText()).append("\n").append(pictToAscii(pict.pictPanel.pixels));
 				if (g1mPart.type != BIDE.TYPE_CAPT) {
 					result.append(pictWarning).append(pictToAscii(pict.pictPanel2.pixels));
 				}
@@ -1064,7 +1064,7 @@ public class BIDE {
 		try {
 			String line;
 			BufferedReader br = new BufferedReader(new InputStreamReader(
-					BIDE.class.getResourceAsStream("/opcodes.txt"), StandardCharsets.UTF_8
+					BIDE.class.getResourceAsStream("/opcodes.json"), StandardCharsets.UTF_8
 			));
 			while ((line = br.readLine()) != null) {
 				sb.append(line);
@@ -1087,7 +1087,7 @@ public class BIDE {
 		for (int i = 0; i < opcodes.size(); i++) {
 			for (int j = i+1; j < opcodes.size(); j++) {
 				if (opcodes.get(i).text.equals(opcodes.get(j).text)) {
-					error("opcodes.txt", "Opcode 0x"+opcodes.get(i).hex + " conflicts with opcode 0x"+opcodes.get(j).hex + "!");
+					error("opcodes.json", "Opcode 0x"+opcodes.get(i).hex + " conflicts with opcode 0x"+opcodes.get(j).hex + "!");
 				}
 			}
 		}

@@ -26,13 +26,13 @@ public class MultiDrawstatGenerator extends JFrame {
 		DrawstatPanel dp = new DrawstatPanel(this);
 		JButton reset = new JButton("Clear all");
 		this.add(new JLabel("Warning: you HAVE to use ViewWindow 1,127,0,63,1,0,0,1,1!"));
-		reset.addActionListener(arg0 -> {
+		reset.addActionListener(event -> {
 			dp.clearScreen();
 			dp.repaint();
 		});
 		this.add(reset);
 		JButton undo = new JButton("Undo");
-		undo.addActionListener(e -> {
+		undo.addActionListener(event -> {
 			if (dp.lines.size() > 0) {
 				dp.lines.remove(dp.lines.size()-1);
 				dp.repaint();
@@ -40,7 +40,7 @@ public class MultiDrawstatGenerator extends JFrame {
 		});
 		this.add(undo);
 		JButton showGridButton = new JButton("Hide grid");
-		showGridButton.addActionListener(arg0 -> {
+		showGridButton.addActionListener(event -> {
 			showGrid = !showGrid;
 			if (showGrid) {
 				showGridButton.setText("Hide grid");
@@ -93,7 +93,7 @@ public class MultiDrawstatGenerator extends JFrame {
 		this.add(radioButtonPanel);
 		this.add(dp, BorderLayout.CENTER);
 		JButton copyButton = new JButton("Copy");
-		copyButton.addActionListener(arg0 -> {
+		copyButton.addActionListener(event -> {
 			StringSelection stringSelection = new StringSelection(dp.result.getText());
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			clipboard.setContents(stringSelection, null);
@@ -144,22 +144,22 @@ class DrawstatPanel extends JPanel {
 		this.setZoom(6);
 		result.setEditable(false);
 		result.addMouseListener(new MouseListener() {
-			@Override public void mouseClicked(MouseEvent arg0) {
+			@Override public void mouseClicked(MouseEvent event) {
 				result.selectAll();
 			}
-			@Override public void mouseEntered(MouseEvent arg0) {}
-			@Override public void mouseExited(MouseEvent arg0) {}
-			@Override public void mousePressed(MouseEvent arg0) {}
-			@Override public void mouseReleased(MouseEvent arg0) {}
+			@Override public void mouseEntered(MouseEvent event) {}
+			@Override public void mouseExited(MouseEvent event) {}
+			@Override public void mousePressed(MouseEvent event) {}
+			@Override public void mouseReleased(MouseEvent event) {}
 		});
 		
 		this.addMouseListener(new MouseListener() {
-			@Override public void mouseClicked(MouseEvent arg0) {
+			@Override public void mouseClicked(MouseEvent event) {
 				if (!drawLineOnHover) {
-					xClick = arg0.getX()/zoom;
-					yClick = arg0.getY()/zoom;
+					xClick = event.getX()/zoom;
+					yClick = event.getY()/zoom;
 				} else {
-					lines.add(new Line(xClick, yClick, arg0.getX()/zoom, arg0.getY()/zoom));
+					lines.add(new Line(xClick, yClick, event.getX()/zoom, event.getY()/zoom));
 					xClick = -1;
 					yClick = -1;
 				}
@@ -167,19 +167,19 @@ class DrawstatPanel extends JPanel {
 				drawLineOnHover = !drawLineOnHover;
 				repaint();
 			}
-			@Override public void mouseEntered(MouseEvent arg0) {}
-			@Override public void mouseExited(MouseEvent arg0) {
+			@Override public void mouseEntered(MouseEvent event) {}
+			@Override public void mouseExited(MouseEvent event) {
 				mdg.info.setText("");
 			}
-			@Override public void mousePressed(MouseEvent arg0) {}
-			@Override public void mouseReleased(MouseEvent arg0) {}
+			@Override public void mousePressed(MouseEvent event) {}
+			@Override public void mouseReleased(MouseEvent event) {}
 		});
 		
 		this.addMouseMotionListener(new MouseMotionListener() {
-			@Override public void mouseDragged(MouseEvent arg0) {}
-			@Override public void mouseMoved(MouseEvent arg0) {
-				xMouse = arg0.getX()/zoom;
-				yMouse = arg0.getY()/zoom;
+			@Override public void mouseDragged(MouseEvent event) {}
+			@Override public void mouseMoved(MouseEvent event) {
+				xMouse = event.getX()/zoom;
+				yMouse = event.getY()/zoom;
 				updateInfo();
 				repaint();
 			}

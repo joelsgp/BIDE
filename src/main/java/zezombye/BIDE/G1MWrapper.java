@@ -1,12 +1,12 @@
 package zezombye.BIDE;
+
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ONLY EVER USE CASIOSTRINGS WHEN HANDLING CASIO ENCODING!
+ * ONLY EVER USE CasioStrings WHEN HANDLING CASIO ENCODING!
  * The reason is that Strings use UTF-16, and invalid encodings are replaced by '?'
  * Try to create the string with byte[]{0xAA, 0xAC, 0xBD, 0xAF, 0x90, 0x88, 0x9A, 0x8D}.
  * You'll see that some characters are replaced by '?'.
@@ -45,7 +45,7 @@ public class G1MWrapper {
 		parts.add(part);
 	}
 	
-	public void generateG1M(String destPath) throws IOException {
+	public void generateG1M(String destPath) {
 		// Header
 		CasioString content = new CasioString();
 		for (CasioString part : parts) {
@@ -69,7 +69,7 @@ public class G1MWrapper {
 		if (BIDE.runOn.equals("emulator")) {
 			BIDE.autoImport.autoImport(destPath);
 		}
-		// todo
+// todo
 // 		else if (BIDE.runOn.equals("calculator")){
 //
 // 		}
@@ -92,8 +92,8 @@ public class G1MWrapper {
 	// Not really necessary to use CasioStrings here
 	// Only special bytes are 0 and 1
 	public CasioString getSubHeaderIDAndDir(int partType, String partName) {
-		StringBuilder partTypeStr = new StringBuilder();
-		StringBuilder partDir = new StringBuilder();
+		StringBuilder partTypeStr;
+		StringBuilder partDir;
 		switch (partType) {
 			case BIDE.TYPE_PROG -> {
 				partTypeStr = new StringBuilder("PROGRAM");
@@ -114,16 +114,12 @@ public class G1MWrapper {
 		}
 		
 		// padding
-		int idlen = partTypeStr.length();
-		for (int i = 0; i < 16-idlen; i++) {
-			partTypeStr.append((char) 0);
-		}
-		int dirlen = partDir.length();
-		for (int i = 0; i < 8-dirlen; i++) {
-			partDir.append((char) 0);
-		}
+		int lenId = partTypeStr.length();
+		partTypeStr.append("0".repeat(Math.max(0, 16 - lenId)));
+		int lenDir = partDir.length();
+		partDir.append("0".repeat(Math.max(0, 8 - lenDir)));
 		
-		return new CasioString(partTypeStr + new String(new char[]{0,0,0,1}) + partDir);
+		return new CasioString(partTypeStr + new String(new char[]{'0', '0', '0', '1'}) + partDir);
 		
 	}
 	

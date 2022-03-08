@@ -98,13 +98,13 @@ class CharPanel extends JPanel {
 		this.addMouseMotionListener(new MouseMotionListener() {
 
 			@Override
-			public void mouseDragged(MouseEvent arg0) {
+			public void mouseDragged(MouseEvent event) {
 			}
 
 			@Override
-			public void mouseMoved(MouseEvent arg0) {
-				xMouse = arg0.getX();
-				yMouse = arg0.getY();
+			public void mouseMoved(MouseEvent event) {
+				xMouse = event.getX();
+				yMouse = event.getY();
 				repaint();
 			}
 		});
@@ -112,24 +112,24 @@ class CharPanel extends JPanel {
 		this.addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(MouseEvent event) {
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent arg0) {
+			public void mouseEntered(MouseEvent event) {
 			}
 
 			@Override
-			public void mouseExited(MouseEvent arg0) {
+			public void mouseExited(MouseEvent event) {
 				xMouse = -1;
 				yMouse = -1;
 				repaint();
 			}
 
 			@Override
-			public void mousePressed(MouseEvent arg0) {
-				int gridX = arg0.getX()/18;
-				int gridY = arg0.getY()/24;
+			public void mousePressed(MouseEvent event) {
+				int gridX = event.getX()/18;
+				int gridY = event.getY()/24;
 				try {
 					String hex = CharPicker.catSymbols[nb][gridX+19*gridY];
 					String insert = "";
@@ -160,7 +160,7 @@ class CharPanel extends JPanel {
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void mouseReleased(MouseEvent event) {
 			}
 			
 		});

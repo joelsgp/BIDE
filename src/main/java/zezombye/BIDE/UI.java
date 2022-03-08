@@ -50,8 +50,8 @@ public class UI {
 			}
 		};
 		
-		BasicTabbedPaneUI btpui = new BasicTabbedPaneUI();
-		jtp.setUI(btpui);
+		BasicTabbedPaneUI btpUi = new BasicTabbedPaneUI();
+		jtp.setUI(btpUi);
 
 		jfc = new JFileChooser();
 		jfc.setMultiSelectionEnabled(true);
@@ -115,28 +115,28 @@ public class UI {
 
 		JMenuBar menuBar = new JMenuBar();
 		ToolbarButton open = new ToolbarButton("openFile.png", "Open file (ctrl+O)");
-		open.addActionListener(arg0 -> openFile(false));
+		open.addActionListener(event -> openFile(false));
 		
 
 		window.getRootPane().registerKeyboardAction(open.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		ToolbarButton save = new ToolbarButton("saveFile.png", "Save file (ctrl+S)");
-		save.addActionListener(arg0 -> saveFile(true, false, false));
+		save.addActionListener(event -> saveFile(true, false, false));
 		
 		window.getRootPane().registerKeyboardAction(save.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		
 		ToolbarButton newProg = new ToolbarButton("newProg.png", "New Basic Casio program");
-		newProg.addActionListener(arg0 -> createNewTab(BIDE.TYPE_PROG));
+		newProg.addActionListener(event -> createNewTab(BIDE.TYPE_PROG));
 		
 		ToolbarButton newPict = new ToolbarButton("newPict.png", "New Picture");
-		newPict.addActionListener(arg0 -> createNewTab(BIDE.TYPE_PICT));
+		newPict.addActionListener(event -> createNewTab(BIDE.TYPE_PICT));
 		
 		ToolbarButton newCapt = new ToolbarButton("newCapt.png", "New Capture");
-		newCapt.addActionListener(arg0 -> createNewTab(BIDE.TYPE_CAPT));
+		newCapt.addActionListener(event -> createNewTab(BIDE.TYPE_CAPT));
 		
 		ToolbarButton run = new ToolbarButton("run.png", "Run file (ctrl+R)");
-		run.addActionListener(arg0 -> saveFile(true, false, true));
+		run.addActionListener(event -> saveFile(true, false, true));
 
 		window.getRootPane().registerKeyboardAction(run.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
@@ -204,15 +204,15 @@ public class UI {
 		JMenu toolsMenu = new JMenu("Tools");
 		menuBar2.add(toolsMenu);
 		JMenuItem multiDrawstat = new JMenuItem("Multi Drawstat Generator");
-		multiDrawstat.addActionListener(arg0 -> new MultiDrawstatGenerator());
+		multiDrawstat.addActionListener(event -> new MultiDrawstatGenerator());
 		toolsMenu.add(multiDrawstat);
 		JMenuItem imgToPict = new JMenuItem("Image to picture");
-		imgToPict.addActionListener(arg0 -> importImage(true));
+		imgToPict.addActionListener(event -> importImage(true));
 		toolsMenu.add(imgToPict);
 		JMenuItem imgToMultiDrawstat = new JMenuItem("Image to Multi Drawstat");
-		imgToMultiDrawstat.addActionListener(arg0 -> importImage(false));
+		imgToMultiDrawstat.addActionListener(event -> importImage(false));
 		JMenuItem showOptions = new JMenuItem("Show/Edit options");
-		showOptions.addActionListener(arg0 -> {
+		showOptions.addActionListener(event -> {
 			try {
 				Desktop.getDesktop().open(new File(BIDE.pathToOptions));
 			} catch (IOException e) {
@@ -221,17 +221,17 @@ public class UI {
 		});
 		toolsMenu.add(showOptions);
 		JMenuItem showOpcodes = new JMenuItem("Show list of opcodes");
-		showOpcodes.addActionListener(arg0 -> createNewTab(BIDE.TYPE_OPCODE));
+		showOpcodes.addActionListener(event -> createNewTab(BIDE.TYPE_OPCODE));
 		toolsMenu.add(showOpcodes);
 		JMenuItem showChars = new JMenuItem("Show characters list");
-		showChars.addActionListener(arg0 -> createNewTab(BIDE.TYPE_CHARLIST));
+		showChars.addActionListener(event -> createNewTab(BIDE.TYPE_CHARLIST));
 		toolsMenu.add(showChars);
 		JMenuItem showColoration = new JMenuItem("Show syntax coloration test");
-		showColoration.addActionListener(arg0 -> createNewTab(BIDE.TYPE_COLORATION));
+		showColoration.addActionListener(event -> createNewTab(BIDE.TYPE_COLORATION));
 		toolsMenu.add(showColoration);
 		
 		JMenuItem cleanup = new JMenuItem("Clean up strings");
-		cleanup.addActionListener(arg0 -> BIDE.cleanupStrings());
+		cleanup.addActionListener(event -> BIDE.cleanupStrings());
 		toolsMenu.add(cleanup);
 		
 		JMenu emulatorMenu = new JMenu("Emulator");
@@ -241,13 +241,13 @@ public class UI {
 		}
 		
 		JMenuItem takeEmuScreenshot = new JMenuItem("Take emulator screenshot");
-		takeEmuScreenshot.addActionListener(arg0 -> BIDE.autoImport.storeEmuScreenshot());
+		takeEmuScreenshot.addActionListener(event -> BIDE.autoImport.storeEmuScreenshot());
 		emulatorMenu.add(takeEmuScreenshot);
 		JMenuItem takeEmuScreenScreenshot = new JMenuItem("Take emulator screen screenshot");
-		takeEmuScreenScreenshot.addActionListener(arg0 -> BIDE.autoImport.storeEmuScreen());
+		takeEmuScreenScreenshot.addActionListener(event -> BIDE.autoImport.storeEmuScreen());
 		emulatorMenu.add(takeEmuScreenScreenshot);
 		JMenuItem benchmark = new JMenuItem("Run benchmark");
-		benchmark.addActionListener(arg0 -> new Thread(new Runnable() {
+		benchmark.addActionListener(event -> new Thread(new Runnable() {
 			public void run() {
 				BIDE.autoImport.benchmark();
 			}
@@ -297,7 +297,7 @@ public class UI {
 			} else if (type == BIDE.TYPE_OPCODE) {
 				name = "Opcodes List";
 				content = "#\n#DO NOT EDIT THIS TAB, changes won't be saved!\n#\n";
-				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/opcodes.txt"), StandardCharsets.UTF_8));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/opcodes.json"), StandardCharsets.UTF_8));
 				String line;
 				StringBuilder stringBuilder = new StringBuilder();
 
@@ -321,7 +321,7 @@ public class UI {
 			} else if (type == BIDE.TYPE_CHARLIST) {
 				name = "All characters";
 				BufferedReader reader = new BufferedReader(new InputStreamReader(BIDE.class.getResourceAsStream("/characters.txt"), StandardCharsets.UTF_8));
-				String line = null;
+				String line;
 				StringBuilder stringBuilder = new StringBuilder();
 
 				try {
@@ -411,21 +411,21 @@ public class UI {
 					G1MParser g1mparser = new G1MParser(BIDE.pathToG1M);
 					g1mparser.readG1M();
 
-					if (!g1mparser.isValid()) {
-						BIDE.readFromTxt(BIDE.pathToG1M);
-					} else {
+					if (g1mparser.isValid()) {
 						BIDE.readFromG1M(BIDE.pathToG1M);
+					} else {
+						BIDE.readFromTxt(BIDE.pathToG1M);
 					}
 
 					if (!addToCurrentFile) {
 						BIDE.pathToSavedG1M = BIDE.pathToG1M;
 					}
 
-					BIDE.g1mParts.sort((arg0, arg1) -> {
-						if (arg0.type == arg1.type) {
-							return arg0.name.compareTo(arg1.name);
+					BIDE.g1mParts.sort((part0, part1) -> {
+						if (part0.type == part1.type) {
+							return part0.name.compareTo(part1.name);
 						} else {
-							return Integer.compare(arg0.type, arg1.type);
+							return Integer.compare(part0.type, part1.type);
 						}
 					});
 

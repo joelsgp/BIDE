@@ -25,15 +25,9 @@ public class EmulatorImport {
 	    User32 INSTANCE = Native.loadLibrary("user32", User32.class);
 
 	    boolean EnumWindows(WinUser.WNDENUMPROC lpEnumFunc, Pointer arg);
-
-	    WinDef.HWND SetFocus(WinDef.HWND hWnd);
-
 	    int GetWindowTextA(HWND hWnd, byte[] lpString, int nMaxCount);
-	    int GetWindowRect(HWND handle, RECT rekt);
+	    int GetWindowRect(HWND handle, RECT rect);
 	    boolean SetForegroundWindow(WinDef.HWND hWnd);
-
-		void BringWindowToTop(HWND emulatorHWND);
-
 		void ShowWindow(HWND emulatorHWND, int i);
 	}
 	
@@ -47,7 +41,7 @@ public class EmulatorImport {
     
     public EmulatorImport() {
     	try {
-			confirmation = ImageIO.read(BIDE.class.getResourceAsStream("/images/confirmation.png"));
+			confirmation = ImageIO.read(getClass().getResourceAsStream("/images/confirmation.png"));
 			complete = ImageIO.read(BIDE.class.getResourceAsStream("/images/complete.png"));
 			memMenu = ImageIO.read(BIDE.class.getResourceAsStream("/images/memMenu.png"));
 			beginBenchmark = ImageIO.read(BIDE.class.getResourceAsStream("/images/beginBenchmark.png"));
@@ -111,7 +105,6 @@ public class EmulatorImport {
     
 	public void autoImport(String path) {
     	if (findEmulator() == null) return;
-    	// storeEmuScreen();
     	// The user is supposed to be on the menu
     	inputKey(KeyEvent.VK_PAGE_DOWN, emuSleep);
     	
