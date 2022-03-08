@@ -11,12 +11,14 @@ autocomplete=true
 optimize=false
 
 # Font of programs. Warning: only change if you have a font that supports ALL the glyphs! (or disable unicode)
-# Default font: "DejaVu Avec Casio"
+# These fonts are packaged with BIDE
+# Default font: "DejaVu With Casio"
 # Casio font: "Casio Graph"
-progFontName=DejaVu Avec Casio
+# Choose your font here
+progFontName=DejaVu With Casio
 
 # It is advised to put a multiple of 7, else the pixels won't be of the same height
-# For DejaVu Avec Casio, a minimum of 14 is required for all glyphs to display properly
+# For DejaVu with Casio, a minimum of 14 is required for all glyphs to display properly
 progFontSize=14
 
 # Default picture zoom size.

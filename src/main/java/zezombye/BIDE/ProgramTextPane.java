@@ -186,7 +186,7 @@ public class ProgramTextPane extends RSyntaxTextArea {
                 .replaceAll("\\[/i]", "</em>")
                 .replaceAll("\\[b]", "<b>")
                 .replaceAll("\\[/b]", "</b>")
-                .replaceAll("\\[code]", "<font face='DejaVu Avec Casio' size='12px'><span style='background-color:rgb(240,240,240);'>")
+                .replaceAll("\\[code]", "<font face='DejaVu With Casio' size='12px'><span style='background-color:rgb(240,240,240);'>")
                 .replaceAll("\\[/code]", "</span></font>")
                 .replaceAll("(\\[img])([\\w/.]+)", "<img src='"+relativeImgPath+"$2")
                 .replaceAll("\\[/img]", "'/>")

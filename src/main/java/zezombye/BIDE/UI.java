@@ -74,7 +74,7 @@ public class UI {
         }
         stdout.setBackground(Color.ORANGE);
         stdout.setCaretColor(stdout.getBackground());
-        stdout.setFont(new Font("DejaVu Avec Casio", Font.PLAIN, 12));
+        stdout.setFont(new Font("DejaVu With Casio", Font.PLAIN, 12));
         stdout.setLineWrap(true);
 
         JScrollPane jsp2 = new JScrollPane(stdout);

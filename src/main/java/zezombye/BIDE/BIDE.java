@@ -147,7 +147,7 @@ public class BIDE {
                 );
                 ge.registerFont(Font.createFont(
                         Font.TRUETYPE_FONT,
-                        BIDE.class.getResourceAsStream("/DejaVuAvecCasio.ttf"))
+                        BIDE.class.getResourceAsStream("/DejaVu with Casio.ttf"))
                 );
             } catch (FontFormatException | IOException e) {
                 e.printStackTrace();
