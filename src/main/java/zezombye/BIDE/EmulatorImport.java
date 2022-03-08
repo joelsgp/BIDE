@@ -22,7 +22,7 @@ import com.sun.jna.win32.StdCallLibrary;
 public class EmulatorImport {
 	
 	public interface User32 extends StdCallLibrary {
-	    User32 INSTANCE = Native.loadLibrary("user32", User32.class);
+	    User32 INSTANCE = Native.load("user32", User32.class);
 
 	    boolean EnumWindows(WinUser.WNDENUMPROC lpEnumFunc, Pointer arg);
 	    int GetWindowTextA(HWND hWnd, byte[] lpString, int nMaxCount);
