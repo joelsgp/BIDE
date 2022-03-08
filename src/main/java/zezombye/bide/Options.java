@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import java.io.*;
 import java.nio.file.Files;

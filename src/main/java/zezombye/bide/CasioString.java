@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import java.util.ArrayList;
 import java.util.Arrays;

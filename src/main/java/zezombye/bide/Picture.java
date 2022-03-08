@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

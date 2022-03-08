@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import java.io.IOException;
 import java.util.ArrayList;

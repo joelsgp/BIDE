@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import java.awt.*;
 import java.util.regex.Pattern;

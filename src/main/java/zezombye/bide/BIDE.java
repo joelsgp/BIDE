@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

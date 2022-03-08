@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import javax.swing.*;
 import javax.swing.text.*;

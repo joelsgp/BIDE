@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 import org.fife.ui.autocomplete.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;

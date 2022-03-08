@@ -1,4 +1,4 @@
-package zezombye.BIDE;
+package zezombye.bide;
 
 // Taken from B2C
 
