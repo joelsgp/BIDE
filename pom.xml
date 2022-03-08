@@ -51,4 +51,11 @@
             <url>https://github.com/Zezombye</url>
         </developer>
     </developers>
+
+    <contributors>
+        <contributor>
+            <name>jmcb</name>
+            <url>https://github.com/joelsgp</url>
+        </contributor>
+    </contributors>
 </project>
