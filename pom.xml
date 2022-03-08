@@ -6,18 +6,13 @@
 
     <groupId>zezombye.BIDE</groupId>
     <artifactId>BIDE</artifactId>
-    <version>4.3.2</version>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+    <version>5.0.0</version>
 
     <dependencies>
         <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>rstaui</artifactId>
-            <version>2.6.1</version>
+            <version>3.1.4</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -26,14 +21,41 @@
         </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna</artifactId>
-            <version>4.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
-            <version>4.5.2</version>
+            <version>5.9.0</version>
         </dependency>
     </dependencies>
-    
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <name>BIDE</name>
+    <description>The BASIC IDE for Casio BASIC</description>
+    <url>https://github.com/Zezombye/BIDE</url>
+    <inceptionYear>2017</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>GPL-3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>Zezombye</id>
+            <url>https://github.com/Zezombye</url>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>jmcb</name>
+            <url>https://github.com/joelsgp</url>
+        </contributor>
+    </contributors>
 </project>

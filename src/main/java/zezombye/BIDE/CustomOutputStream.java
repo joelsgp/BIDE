@@ -1,10 +1,12 @@
 package zezombye.BIDE;
-import java.io.IOException;
+
+import javax.swing.*;
 import java.io.OutputStream;
-import javax.swing.JTextArea;
+import java.nio.charset.StandardCharsets;
+
 
 public class CustomOutputStream extends OutputStream {
-	private JTextArea output;
+    private final JTextArea output;
     private byte[] bytes = new byte[1024];
     private int currentBytePos = 0;
 
@@ -13,19 +15,14 @@ public class CustomOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(int i) throws IOException {
-        bytes[currentBytePos] = (byte)i;
+    public void write(int i) {
+        bytes[currentBytePos] = (byte) i;
         currentBytePos++;
         if (i == '\n') {
-             output.append(new String(bytes, 0, currentBytePos, "UTF-8"));
-			 output.setCaretPosition(output.getText().length());
-             bytes = new byte[1024];
-             currentBytePos = 0;
-             
+            output.append(new String(bytes, 0, currentBytePos, StandardCharsets.UTF_8));
+            output.setCaretPosition(output.getText().length());
+            bytes = new byte[1024];
+            currentBytePos = 0;
         }
-       
-
-
     }
-
 }
