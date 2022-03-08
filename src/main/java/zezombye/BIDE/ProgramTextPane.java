@@ -15,6 +15,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rtextarea.CaretStyle;
 
+
 public class ProgramTextPane extends RSyntaxTextArea {
 	
 	public static DefaultCompletionProvider cp;

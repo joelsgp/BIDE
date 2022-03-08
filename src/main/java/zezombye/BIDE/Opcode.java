@@ -1,6 +1,8 @@
 package zezombye.BIDE;
 
+
 public class Opcode {
+
 	String hex;
 	String text;
 	String unicode;

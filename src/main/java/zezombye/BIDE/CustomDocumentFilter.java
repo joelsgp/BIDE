@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 
 public class CustomDocumentFilter extends DocumentFilter {
     private final StyledDocument styledDocument;

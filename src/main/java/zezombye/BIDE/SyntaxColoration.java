@@ -207,5 +207,4 @@ public class SyntaxColoration extends AbstractTokenMaker {
 		   
 		   return tokenMap;
 	}
-	
 }

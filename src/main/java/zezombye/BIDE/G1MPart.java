@@ -8,6 +8,7 @@ import javax.swing.event.DocumentListener;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+
 public class G1MPart {
 	
 	public CasioString binaryContent = null;
@@ -63,6 +64,7 @@ public class G1MPart {
 		}
 	}
 }
+
 
 class ProgScrollPane extends RTextScrollPane {
 	

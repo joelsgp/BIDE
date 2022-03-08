@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import javax.swing.JTextArea;
 
+
 public class CustomOutputStream extends OutputStream {
 	private final JTextArea output;
     private byte[] bytes = new byte[1024];
@@ -22,11 +23,6 @@ public class CustomOutputStream extends OutputStream {
 			 output.setCaretPosition(output.getText().length());
              bytes = new byte[1024];
              currentBytePos = 0;
-             
         }
-       
-
-
     }
-
 }

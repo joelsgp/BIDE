@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 public class CasioString {
 	private List<Byte> content = new ArrayList<>();
 	
@@ -134,7 +135,4 @@ public class CasioString {
 		CasioString cs = (CasioString)obj;
 		return cs.getContent().equals(this.getContent());
 	}
-
-
-	
 }

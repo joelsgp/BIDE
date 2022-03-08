@@ -1,4 +1,5 @@
 package zezombye.BIDE;
+
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -7,10 +8,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+
 public class FixedInputDialog extends JDialog {
-	
+
 	public void showInputDialog(Window parent, String message, String title, String defaultInputValue) {
-		
 		JDialog dialog = new JDialog(parent, title, Dialog.DEFAULT_MODALITY_TYPE);
 		dialog.setLocationRelativeTo(parent);
 		dialog.setLayout(new FlowLayout());
@@ -23,5 +24,4 @@ public class FixedInputDialog extends JDialog {
 		dialog.pack();
 		dialog.setVisible(true);
 	}
-	
 }

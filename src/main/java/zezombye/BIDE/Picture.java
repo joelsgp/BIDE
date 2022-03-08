@@ -248,6 +248,7 @@ public class Picture extends JPanel {
 	
 }
 
+
 class PictPanel extends JPanel {
 	
 	
@@ -349,7 +350,4 @@ class PictPanel extends JPanel {
 		g.drawLine(128*zoom+1, 0, 128*zoom+1, 64*zoom+1);
 		g.drawLine(0, 64*zoom+1, 128*zoom+1, 64*zoom+1);
 	}
-	
-	
-	
 }

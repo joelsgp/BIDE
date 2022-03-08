@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * ONLY EVER USE CasioStrings WHEN HANDLING CASIO ENCODING!
  * The reason is that Strings use UTF-16, and invalid encodings are replaced by '?'
  * Try to create the string with byte[]{0xAA, 0xAC, 0xBD, 0xAF, 0x90, 0x88, 0x9A, 0x8D}.
  * You'll see that some characters are replaced by '?'.
  */
+
 
 public class G1MWrapper {
 	
@@ -116,7 +118,5 @@ public class G1MWrapper {
 		partDir.append("0".repeat(Math.max(0, 8 - lenDir)));
 		
 		return new CasioString(partTypeStr + new String(new char[]{'0', '0', '0', '1'}) + partDir);
-		
 	}
-	
 }

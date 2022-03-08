@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+
 public class CharPicker extends JPanel {
 
 	public JTabbedPane jtp = new JTabbedPane();
@@ -81,6 +82,7 @@ public class CharPicker extends JPanel {
 	}
 	
 }
+
 
 class CharPanel extends JPanel {
 	
@@ -184,6 +186,4 @@ class CharPanel extends JPanel {
         
         g2d.dispose();
 	}
-	
-	
 }

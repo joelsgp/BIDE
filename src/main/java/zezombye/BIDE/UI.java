@@ -1,5 +1,6 @@
 package zezombye.BIDE;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,12 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.*;
 
-import java.awt.*;
 
 public class UI {
 	
@@ -591,6 +591,7 @@ public class UI {
 	
 }
 
+
 class ToolbarButton extends JButton {
 	public ToolbarButton(String iconName, String toolTip) {
 		super();
@@ -605,6 +606,7 @@ class ToolbarButton extends JButton {
 		this.setToolTipText(toolTip);
 	}
 }
+
 
 class ButtonTabComponent extends JPanel {
     private final JTabbedPane pane;
@@ -636,6 +638,7 @@ class ButtonTabComponent extends JPanel {
         JButton button = new TabButton();
         add(button);
     }
+
 
     private class TabButton extends JButton implements ActionListener {
         public TabButton() {

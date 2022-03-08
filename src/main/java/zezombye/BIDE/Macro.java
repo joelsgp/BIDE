@@ -2,6 +2,7 @@ package zezombye.BIDE;
 
 import java.util.Arrays;
 
+
 public class Macro {
 	String text;
 	String replacement;

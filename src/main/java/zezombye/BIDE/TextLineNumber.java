@@ -9,6 +9,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+
 /**
  *  This class will display line numbers for a related text component. The text
  *  component must use the same line height for each line. TextLineNumber
@@ -18,6 +19,8 @@ import javax.swing.text.*;
  *  This class was designed to be used as a component added to the row header
  *  of a JScrollPane.
  */
+
+
 public class TextLineNumber extends JPanel
 	implements CaretListener, DocumentListener, PropertyChangeListener
 {
@@ -430,8 +433,7 @@ public class TextLineNumber extends JPanel
 		});
 	}
 
-
-// Implement PropertyChangeListener interface
+	// Implement PropertyChangeListener interface
 	@Override
 	public void propertyChange(PropertyChangeEvent evt)
 	{

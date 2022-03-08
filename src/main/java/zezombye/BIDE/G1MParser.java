@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class G1MParser {
-		
 	
 	String path;
 	CasioString fileContent;

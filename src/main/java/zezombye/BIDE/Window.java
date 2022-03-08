@@ -11,6 +11,7 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
+
 public class Window extends JFrame implements SearchListener {
 	public ReplaceDialog replaceDialog;
 

@@ -3,6 +3,7 @@ package zezombye.BIDE;
 import java.awt.Color;
 import java.util.regex.Pattern;
 
+
 public class ColorationPattern {
 	public Pattern pattern;
 	public Color color;

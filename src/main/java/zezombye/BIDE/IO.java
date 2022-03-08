@@ -13,12 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+
 /**
  * ONLY EVER USE CasioStrings WHEN HANDLING CASIO ENCODING!
  * The reason is that Strings use UTF-16, and invalid encodings are replaced by '?'
  * Try to create the string with byte[]{0xAA, 0xAC, 0xBD, 0xAF, 0x90, 0x88, 0x9A, 0x8D}.
  * You'll see that some characters are replaced by '?'.
  */
+
 
 public class IO {
 	public static void writeToFile(File file, List<Byte> content, boolean deleteFile) {

@@ -10,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
+
 public class MultiDrawstatGenerator extends JFrame {
 	
 	public boolean showGrid = true;
@@ -119,6 +120,7 @@ public class MultiDrawstatGenerator extends JFrame {
 		this.setVisible(true);
 	}
 }
+
 
 class DrawstatPanel extends JPanel {
 	
@@ -381,6 +383,7 @@ class DrawstatPanel extends JPanel {
         
 	}
 }
+
 
 class Line {
 	int x0, y0, x1, y1;
