@@ -3,8 +3,6 @@ package zezombye.bide;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +17,7 @@ import java.util.Arrays;
 
 
 // todo: fix bug index 2 out of bounds for length 2 in repaint thing
+
 
 public class UI {
 
@@ -46,9 +45,6 @@ public class UI {
                 this.setTabComponentAt(jtp.getTabCount()-1, new ButtonTabComponent(jtp));
             }
         };
-
-        BasicTabbedPaneUI btpUi = new BasicTabbedPaneUI();
-        jtp.setUI(btpUi);
 
         jfc = new JFileChooser();
         jfc.setMultiSelectionEnabled(true);
@@ -640,8 +636,6 @@ class ButtonTabComponent extends JPanel {
     private class TabButton extends JButton implements ActionListener {
         public TabButton() {
             setPreferredSize(new Dimension(9, 17));
-            //Make the button looks the same for all Laf's
-            setUI(new BasicButtonUI());
             //Make it transparent
             setContentAreaFilled(false);
             //No need to be focusable
