@@ -280,7 +280,7 @@ public class UI {
             }
             if (name.endsWith("null")) return;
 
-            BIDE.g1mParts.add(new G1MPart(name, size, new Byte[0], type));
+            BIDE.g1mParts.add(new G1MPart(name, size, "", type));
             jtp.addTab(name, BIDE.g1mParts.get(BIDE.g1mParts.size()-1).comp);
 
         } else {

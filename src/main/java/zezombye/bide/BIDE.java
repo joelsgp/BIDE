@@ -218,7 +218,7 @@ public class BIDE {
                 return;
             }
 
-            Object content = "";
+            String content = "";
             if (type == BIDE.TYPE_PROG) {
                 if (option.startsWith("#Password: ")) {
                     if (!option.substring(11).equals("<no password>")) {

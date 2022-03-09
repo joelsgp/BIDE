@@ -30,24 +30,12 @@ public class Picture extends JPanel {
     JLabel pictTutorial = new JLabel("Left click for black, right click for white, ctrl+scroll to zoom");
     JLabel pictWarning = new JLabel("Do not edit the picture below unless you know what you are doing!");
 
-    public Picture(int type, String name, int size, Byte[] data) {
+    public Picture(int type, String name, int size, byte[] data) {
         this(type, name, size);
 
         pictPanel.pixels = Arrays.copyOfRange(data, 0, 0x400);
-        for (int i = 0; i < 0x400; i++) {
-            if (pictPanel.pixels[i] == null) {
-                pictPanel.pixels[i] = (byte)0;
-            }
-        }
-
         if (size > 0x400 && data.length > 0x400) {
             pictPanel2.pixels = Arrays.copyOfRange(data, 0x400, size);
-
-            for (int i = 0; i < size-0x400; i++) {
-                if (pictPanel2.pixels[i] == null) {
-                    pictPanel2.pixels[i] = (byte)0;
-                }
-            }
         }
     }
 
@@ -246,7 +234,7 @@ class PictPanel extends JPanel {
     int id;
     Dimension size = new Dimension(128*zoom+1, 64*zoom+1);
     int pictSize;
-    Byte[] pixels = new Byte[16*64];
+    byte[] pixels = new byte[16*64];
 
     int xClick=-1, yClick=-1;
 

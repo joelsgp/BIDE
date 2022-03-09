@@ -1,11 +1,10 @@
 package zezombye.bide;
 
-import org.fife.ui.rtextarea.RTextScrollPane;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class G1MPart {
 
@@ -19,12 +18,12 @@ public class G1MPart {
 
     // Warning: do not use name, option or content to retrieve information because they may have changed!
     // For example, if the user modifies the content to modify the name, that change will not be reflected in name (nor in content).
-    public G1MPart(String name, String option, Object content, int type) {
+    public G1MPart(String name, String option, String content, int type) {
         this.name = name;
         this.option = option;
         this.type = type;
         // Check if content is missing headers
-        if (type != BIDE.TYPE_PICT && type != BIDE.TYPE_CAPT && !((String)content).startsWith("#")) {
+        if (type != BIDE.TYPE_PICT && type != BIDE.TYPE_CAPT && !content.startsWith("#")) {
             if (type == BIDE.TYPE_PROG) {
                 content = "#Program name: "+name+"\n#Password: "+option+"\n"+content;
             }
@@ -32,11 +31,11 @@ public class G1MPart {
         this.content = content;
 
         if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
-            this.comp = new Picture(type, name, Integer.valueOf(option, 16), (Byte[])content).jsp;
+            this.comp = new Picture(type, name, Integer.valueOf(option, 16), content.getBytes()).jsp;
         } else {
             if (!BIDE.isCLI) {
                 ProgramTextPane textPane = new ProgramTextPane(type);
-                textPane.setText((String)content);
+                textPane.setText(content);
                 textPane.getDocument().addDocumentListener(new DocumentListener() {
 
                     @Override
