@@ -32,7 +32,13 @@ public class G1MPart {
         this.content = content;
 
         if (type == BIDE.TYPE_PICT || type == BIDE.TYPE_CAPT) {
-            this.comp = new Picture(type, name, Integer.valueOf(option, 16), (Byte[])content).jsp;
+            String contentString = (String) content;
+            byte[] contentBytesPrimitive = contentString.getBytes();
+            Byte[] contentBytes = new Byte[contentBytesPrimitive.length];
+            for (int i = 0; i < contentBytesPrimitive.length; i++) {
+                contentBytes[i] = contentBytesPrimitive[i];
+            }
+            this.comp = new Picture(type, name, Integer.valueOf(option, 16), contentBytes).jsp;
         } else {
             if (!BIDE.isCLI) {
                 ProgramTextPane textPane = new ProgramTextPane(type);

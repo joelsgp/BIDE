@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+// todo: fix bug index 2 out of bounds for length 2 in repaint thing
+
 public class UI {
 
     Window window = new Window();
